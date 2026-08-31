@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Penilaian Terpadu - Mister Donut</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-gray-100 p-2 sm:p-6 font-sans text-gray-800 selection:bg-orange-200">
+    <div class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-xl overflow-hidden mb-12">
+        
+        <!-- Portal Header & Navigation Switcher -->
+        <div class="bg-gradient-to-r from-orange-600 to-orange-700 p-6 text-white text-center border-b-4 border-orange-800 relative overflow-hidden">
+            <div class="absolute top-[-20px] left-[-20px] w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+            <div class="flex items-center justify-center gap-2 mb-1">
+                <i data-lucide="donut" class="w-8 h-8 text-orange-200"></i>
+                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-wider">Portal Penilaian Seleksi Crew &amp; Baker</h1>
+            </div>
+            <p class="text-sm sm:text-base font-medium opacity-90 tracking-wide mb-6">MISTER DONUT INDONESIA — PILIH FORM PENILAIAN DI BAWAH INI</p>
+            
+            <!-- Tab Switcher -->
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-4 relative z-10">
+                <button onclick="switchTab('sidedish')" id="btn-sidedish" class="tab-btn px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 bg-white text-orange-700 ring-2 ring-white">
+                    <i data-lucide="utensils" class="w-4 h-4"></i> Form Side Dish
+                </button>
+                <button onclick="switchTab('beverage')" id="btn-beverage" class="tab-btn px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 bg-orange-800/80 text-white hover:bg-orange-800">
+                    <i data-lucide="coffee" class="w-4 h-4"></i> Form Beverage
+                </button>
+                <button onclick="switchTab('scale14')" id="btn-scale14" class="tab-btn px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 bg-orange-800/80 text-white hover:bg-orange-800">
+                    <i data-lucide="award" class="w-4 h-4"></i> Form Teknis &amp; Nonteknis (Skala 1-4)
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= GLOBAL STORE INFORMATION SECTION ================= -->
+        <div class="bg-amber-50 border-b border-orange-200 p-4 sm:p-6 shadow-sm">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center gap-2 mb-3">
+                    <i data-lucide="store" class="w-5 h-5 text-orange-700"></i>
+                    <h3 class="text-sm font-black text-orange-900 uppercase tracking-wide">Informasi Utama Flagship / Satelite Store (Diisi 1 Kali untuk Semua Form)</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-orange-800 mb-1 uppercase tracking-wider">Nama Flagship / Satelite Store <span class="text-red-500">*</span></label>
+                        <input type="text" id="global_flagship" oninput="syncGlobalData('flagship', this.value)" class="w-full p-2.5 border border-orange-300 rounded-md focus:ring-2 focus:ring-orange-500 outline-none bg-white font-medium text-gray-800" placeholder="Contoh: FX Sudirman">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-orange-800 mb-1 uppercase tracking-wider">Batch <span class="text-red-500">*</span></label>
+                        <input type="text" id="global_batch" oninput="syncGlobalData('batch', this.value)" class="w-full p-2.5 border border-orange-300 rounded-md focus:ring-2 focus:ring-orange-500 outline-none bg-white font-medium text-gray-800" placeholder="Contoh: Batch 14">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-orange-800 mb-1 uppercase tracking-wider">Hari / Tanggal Penilaian <span class="text-red-500">*</span></label>
+                        <input type="date" id="global_date" onchange="syncGlobalData('date', this.value)" class="w-full p-2.5 border border-orange-300 rounded-md focus:ring-2 focus:ring-orange-500 outline-none bg-white font-medium text-gray-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-orange-800 mb-1 uppercase tracking-wider">Jumlah Peserta <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="global_participantCount" min="1" max="10" value="1" onchange="syncGlobalParticipants(this.value)" class="w-full p-2.5 border border-orange-300 rounded-md focus:ring-2 focus:ring-orange-500 outline-none bg-white font-medium text-gray-800">
+                            <span class="text-xs text-gray-500 shrink-0">Maks: 10</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 1: SIDE DISH ================= -->
+        <div id="tab-content-sidedish" class="form-tab-content p-4 sm:p-8">
+            <div class="mb-6 bg-orange-50 p-4 rounded-lg border border-orange-200 flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-black text-orange-900 uppercase">Form Tes Praktik Side Dish</h2>
+                    <p class="text-xs text-orange-700">Penilaian khusus menu pendamping (Mie Gordon Nanban & Mentai).</p>
+                </div>
+                <span class="bg-gray-200 text-gray-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Opsional (Jika Tersedia)</span>
+            </div>
+
+            <div class="overflow-x-auto w-full mb-8 border border-gray-300 rounded-lg shadow-sm">
+                <table class="w-full text-left border-collapse min-w-[1000px]">
+                    <thead id="tableHead_sidedish"></thead>
+                    <tbody id="tableBody_sidedish"></tbody>
+                </table>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-6">
+                <div class="flex-1 flex flex-col">
+                    <label class="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        KOMENTAR PEMEGANG SHIFT / MENTOR <span class="text-gray-400 text-xs font-normal bg-gray-100 px-2 py-0.5 rounded">*Opsional jika form diisi</span>
+                    </label>
+                    <textarea id="comments_sidedish" class="w-full flex-1 min-h-[150px] p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none bg-white" placeholder="Tuliskan evaluasi teknik, catatan kebersihan, atau ketepatan waktu..."></textarea>
+                </div>
+                <div class="w-full lg:w-[350px] flex flex-col items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label class="text-sm font-bold text-gray-800 mb-4 text-center">Tanda Tangan Pemegang Shift</label>
+                    <div class="flex flex-col items-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 overflow-hidden w-full">
+                        <canvas id="signatureCanvas_sidedish" width="300" height="150" style="touch-action: none;" class="bg-white touch-none cursor-crosshair w-full max-w-[300px]"></canvas>
+                        <div class="w-full flex justify-between items-center px-3 py-2 bg-gray-100 border-t border-gray-200">
+                            <span class="text-xs text-gray-500 italic">Gunakan jari / stylus</span>
+                            <button type="button" onclick="clearSignature('sidedish')" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50/50 p-5 border border-blue-100 rounded-lg text-sm text-gray-700 space-y-2 mb-8 shadow-sm">
+                <p class="font-bold text-blue-900 mb-2">NOTE PENTING & STANDAR PRAKTIK SIDE DISH:</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>Preparation Telur: 10 Menit (rebus telur selama 7 menit)</li>
+                    <li>Preparation Indomie Nanban / Mentai: 2.30 Menit</li>
+                    <li>Finishing & Plating: ± 5 Menit</li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 border-t pt-6">
+                <button onclick="confirmResetForm('sidedish')" class="flex items-center justify-center gap-2 px-6 py-3 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg font-bold cursor-pointer">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Kosongkan Form
+                </button>
+                <button onclick="handleSubmit('sidedish')" class="flex items-center justify-center gap-2 px-8 py-3 text-white bg-orange-600 hover:bg-orange-700 rounded-lg font-bold cursor-pointer shadow-md">
+                    <i data-lucide="save" class="w-5 h-5"></i> Simpan Penilaian Side Dish
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= TAB 2: BEVERAGE ================= -->
+        <div id="tab-content-beverage" class="form-tab-content p-4 sm:p-8 hidden">
+            <div class="mb-6 bg-orange-50 p-4 rounded-lg border border-orange-200 flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-black text-orange-900 uppercase">Form Tes Praktik Beverage</h2>
+                    <p class="text-xs text-orange-700">Penilaian produksi minuman panas dan dingin.</p>
+                </div>
+                <span class="bg-gray-200 text-gray-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Opsional (Jika Tersedia)</span>
+            </div>
+
+            <div class="overflow-x-auto w-full mb-8 border border-gray-300 rounded-lg shadow-sm">
+                <table class="w-full text-left border-collapse min-w-[1000px]">
+                    <thead id="tableHead_beverage"></thead>
+                    <tbody id="tableBody_beverage"></tbody>
+                </table>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-6">
+                <div class="flex-1 flex flex-col">
+                    <label class="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        KOMENTAR PEMEGANG SHIFT <span class="text-gray-400 text-xs font-normal bg-gray-100 px-2 py-0.5 rounded">*Opsional jika form diisi</span>
+                    </label>
+                    <textarea id="comments_beverage" class="w-full flex-1 min-h-[150px] p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none bg-white" placeholder="Tuliskan evaluasi teknis, catatan sikap, atau area pengembangan..."></textarea>
+                </div>
+                <div class="w-full lg:w-[350px] flex flex-col items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label class="text-sm font-bold text-gray-800 mb-4 text-center">Tanda Tangan Pemegang Shift</label>
+                    <div class="flex flex-col items-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 overflow-hidden w-full">
+                        <canvas id="signatureCanvas_beverage" width="300" height="150" style="touch-action: none;" class="bg-white touch-none cursor-crosshair w-full max-w-[300px]"></canvas>
+                        <div class="w-full flex justify-between items-center px-3 py-2 bg-gray-100 border-t border-gray-200">
+                            <span class="text-xs text-gray-500 italic">Gunakan jari atau stylus</span>
+                            <button type="button" onclick="clearSignature('beverage')" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50/50 p-5 border border-blue-100 rounded-lg text-sm text-gray-700 space-y-2 mb-8 shadow-sm">
+                <p class="font-bold text-blue-900 mb-2">NOTE PENTING & STANDAR PRAKTIK BEVERAGE:</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>Preparation: 1 Menit</li>
+                    <li>Pengolahan minuman: Cold (1 Menit 30 Detik), Hot (2 Menit)</li>
+                    <li>Finishing: 1 Menit</li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 border-t pt-6">
+                <button onclick="confirmResetForm('beverage')" class="flex items-center justify-center gap-2 px-6 py-3 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg font-bold cursor-pointer">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Kosongkan Form
+                </button>
+                <button onclick="handleSubmit('beverage')" class="flex items-center justify-center gap-2 px-8 py-3 text-white bg-orange-600 hover:bg-orange-700 rounded-lg font-bold cursor-pointer shadow-md">
+                    <i data-lucide="save" class="w-5 h-5"></i> Simpan Penilaian Beverage
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= TAB 3: SCALE 1-4 ================= -->
+        <div id="tab-content-scale14" class="form-tab-content p-4 sm:p-8 hidden">
+            <div class="mb-6 bg-orange-50 p-4 rounded-lg border border-orange-200 flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-black text-orange-900 uppercase">Form Penilaian Teknis &amp; Nonteknis (Skala 1-4)</h2>
+                    <p class="text-xs text-orange-700">Penilaian komprehensif keterampilan kerja dan etika untuk Baker & Crew.</p>
+                </div>
+                <span class="bg-orange-200 text-orange-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Wajib Diisi</span>
+            </div>
+
+            <div class="overflow-x-auto w-full mb-8 border border-gray-300 rounded-lg shadow-sm">
+                <table class="w-full text-left border-collapse min-w-[1100px]">
+                    <thead id="tableHead_scale14"></thead>
+                    <tbody id="tableBody_scale14"></tbody>
+                </table>
+            </div>
+
+            <!-- Per-Participant Feedback Section -->
+            <div class="mb-8">
+                <h3 class="text-sm font-black text-orange-900 uppercase tracking-wide mb-4 flex items-center gap-2">
+                    <i data-lucide="message-square-text" class="w-5 h-5 text-orange-700"></i> Catatan & Pengembangan Per Peserta (Wajib Diisi)
+                </h3>
+                <div id="participantFeedbackContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Dynamic per participant feedback cards inserted via JS -->
+                </div>
+            </div>
+
+            <!-- Global Signature for Scale 1-4 Form -->
+            <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <h4 class="text-sm font-bold text-gray-800 mb-1">Pengesahan Penilaian Teknis & Nonteknis</h4>
+                    <p class="text-xs text-gray-500">Pastikan seluruh penilaian per peserta dan catatan sudah terisi dengan benar sebelum melakukan penyimpanan.</p>
+                </div>
+                <div class="w-full md:w-[350px] flex flex-col items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label class="text-sm font-bold text-gray-800 mb-3 text-center">Tanda Tangan Pemegang Shift <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col items-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 overflow-hidden w-full">
+                        <canvas id="signatureCanvas_scale14" width="300" height="150" style="touch-action: none;" class="bg-white touch-none cursor-crosshair w-full max-w-[300px]"></canvas>
+                        <div class="w-full flex justify-between items-center px-3 py-2 bg-gray-100 border-t border-gray-200">
+                            <span class="text-xs text-gray-500 italic">Gunakan jari atau stylus</span>
+                            <button type="button" onclick="clearSignature('scale14')" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50/50 p-5 border border-blue-100 rounded-lg text-sm text-gray-700 space-y-2 mb-8 shadow-sm">
+                <p class="font-bold text-blue-900 mb-2">PANDUAN SKALA PENILAIAN (1 - 4):</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><b>1 (Sangat Kurang)</b> : Tidak bisa melakukannya.</li>
+                    <li><b>2 (Kurang)</b> : Bisa tetapi masih kurang dari standar.</li>
+                    <li><b>3 (Baik)</b> : Sesuai standar.</li>
+                    <li><b>4 (Sangat Baik)</b> : Melebihi standar.</li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 border-t pt-6">
+                <button onclick="confirmResetForm('scale14')" class="flex items-center justify-center gap-2 px-6 py-3 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg font-bold cursor-pointer">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Kosongkan Form
+                </button>
+                <button onclick="handleSubmit('scale14')" class="flex items-center justify-center gap-2 px-8 py-3 text-white bg-orange-600 hover:bg-orange-700 rounded-lg font-bold cursor-pointer shadow-md">
+                    <i data-lucide="save" class="w-5 h-5"></i> Simpan Penilaian Skala 1-4
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Notifikasi Umum -->
+    <div id="notificationModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <div id="modalIconContainer" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5"></div>
+            <h3 id="modalTitle" class="text-xl font-black text-gray-800 mb-2"></h3>
+            <p id="modalMessage" class="text-gray-600 mb-8 leading-relaxed"></p>
+            <button onclick="closeModal()" class="w-full font-bold py-3 px-4 rounded-xl text-white transition-colors shadow-md bg-orange-600 hover:bg-orange-700 cursor-pointer">
+                Tutup & Kembali
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Reset Umum -->
+    <div id="resetModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                <i data-lucide="refresh-cw" class="w-10 h-10 text-orange-600 animate-spin"></i>
+            </div>
+            <h3 class="text-xl font-black text-gray-800 mb-2">Kosongkan Form?</h3>
+            <p class="text-gray-600 mb-8">Semua nilai dan catatan pada form ini akan dihapus permanen. Lanjutkan?</p>
+            <div class="flex gap-3">
+                <button onclick="closeResetModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-colors cursor-pointer">Batal</button>
+                <button id="confirmResetBtn" class="flex-1 bg-orange-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-orange-700 transition-colors cursor-pointer">Ya, Kosongkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State for Store Data
+        const globalStore = {
+            flagship: '',
+            batch: '',
+            date: '',
+            participantCount: 1
+        };
+
+        function syncGlobalData(field, value) {
+            globalStore[field] = value;
+        }
+
+        function syncGlobalParticipants(val) {
+            let cnt = parseInt(val) || 1;
+            if (cnt < 1) cnt = 1; if (cnt > 10) cnt = 10;
+            document.getElementById('global_participantCount').value = cnt;
+            globalStore.participantCount = cnt;
+            
+            // Sync counts across all tables
+            pCount_sidedish = cnt;
+            while (pNames_sidedish.length < pCount_sidedish) pNames_sidedish.push('');
+            if (pNames_sidedish.length > pCount_sidedish) pNames_sidedish = pNames_sidedish.slice(0, pCount_sidedish);
+            renderSideDishTable();
+
+            pCount_beverage = cnt;
+            while (pNames_beverage.length < pCount_beverage) pNames_beverage.push('');
+            if (pNames_beverage.length > pCount_beverage) pNames_beverage = pNames_beverage.slice(0, pCount_beverage);
+            renderBeverageTable();
+
+            pCount_scale14 = cnt;
+            while (participants_scale14.length < pCount_scale14) {
+                participants_scale14.push({ name: '', position: 'Baker', scores: {}, status: 'Diluluskan', rejectionReason: '', improvements: '', strengths: '' });
+            }
+            if (participants_scale14.length > pCount_scale14) {
+                participants_scale14 = participants_scale14.slice(0, pCount_scale14);
+            }
+            renderScale14Table();
+            renderParticipantFeedback();
+        }
+
+        // Tab Switcher Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.form-tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 bg-orange-800/80 text-white hover:bg-orange-800";
+            });
+
+            document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            activeBtn.className = "tab-btn px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2 bg-white text-orange-700 ring-2 ring-white";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lucide.createIcons();
+        }
+
+        // --- SIGNATURE CANVASES SETUP ---
+        const signatures = {
+            sidedish: { canvas: null, ctx: null, isDrawing: false, dataUrl: null },
+            beverage: { canvas: null, ctx: null, isDrawing: false, dataUrl: null },
+            scale14: { canvas: null, ctx: null, isDrawing: false, dataUrl: null }
+        };
+
+        function initSignatures() {
+            ['sidedish', 'beverage', 'scale14'].forEach(key => {
+                const cv = document.getElementById(`signatureCanvas_${key}`);
+                if (!cv) return;
+                signatures[key].canvas = cv;
+                signatures[key].ctx = cv.getContext('2d');
+                const sig = signatures[key];
+
+                const getPos = (e) => {
+                    const rect = cv.getBoundingClientRect();
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    return { x: clientX - rect.left, y: clientY - rect.top };
+                };
+
+                const start = (e) => {
+                    e.preventDefault();
+                    sig.isDrawing = true;
+                    const pos = getPos(e);
+                    sig.ctx.lineWidth = 2;
+                    sig.ctx.lineCap = 'round';
+                    sig.ctx.lineJoin = 'round';
+                    sig.ctx.strokeStyle = '#1e293b';
+                    sig.ctx.beginPath();
+                    sig.ctx.moveTo(pos.x, pos.y);
+                };
+
+                const drawMove = (e) => {
+                    if (!sig.isDrawing) return;
+                    e.preventDefault();
+                    const pos = getPos(e);
+                    sig.ctx.lineTo(pos.x, pos.y);
+                    sig.ctx.stroke();
+                };
+
+                const stop = () => {
+                    if (sig.isDrawing) {
+                        sig.isDrawing = false;
+                        sig.dataUrl = cv.toDataURL();
+                    }
+                };
+
+                cv.addEventListener('mousedown', start);
+                cv.addEventListener('mousemove', drawMove);
+                cv.addEventListener('mouseup', stop);
+                cv.addEventListener('mouseleave', stop);
+
+                cv.addEventListener('touchstart', start);
+                cv.addEventListener('touchmove', drawMove);
+                cv.addEventListener('touchend', stop);
+            });
+        }
+
+        function clearSignature(key) {
+            const sig = signatures[key];
+            if (sig && sig.ctx && sig.canvas) {
+                sig.ctx.clearRect(0, 0, sig.canvas.width, sig.canvas.height);
+                sig.dataUrl = null;
+            }
+        }
+
+        // --- DATA & RENDERING: SIDE DISH ---
+        const sideDishes = [
+            { id: 'mg_nanban', name: 'Mie Gordon Nanban' },
+            { id: 'mg_mentai', name: 'Mie Gordon Mentai' },
+        ];
+        let pCount_sidedish = 1;
+        let pNames_sidedish = [''];
+        let scores_sidedish = {};
+
+        function renderSideDishTable() {
+            const thead = document.getElementById('tableHead_sidedish');
+            const tbody = document.getElementById('tableBody_sidedish');
+
+            let h1 = `<tr class="bg-orange-100 text-orange-900 border-b-2 border-orange-200">
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold w-[250px]" rowspan="2">MENU SIDE DISH</th>`;
+            for (let i = 0; i < pCount_sidedish; i++) {
+                h1 += `<th class="border-r border-gray-300 p-3 text-center bg-gray-50" colspan="3">
+                    <div class="text-xs text-gray-500 font-bold mb-1 uppercase">Peserta ${i + 1}</div>
+                    <input type="text" class="w-full p-2 border border-gray-300 rounded-md text-sm text-center outline-none bg-white name-sd" data-index="${i}" placeholder="Nama Peserta..." value="${pNames_sidedish[i] || ''}">
+                </th>`;
+            }
+            h1 += `</tr>`;
+
+            let h2 = `<tr class="bg-orange-50">`;
+            for (let i = 0; i < pCount_sidedish; i++) {
+                h2 += `<th class="border-r border-t border-gray-300 p-2 text-center text-[11px] font-bold text-gray-600">TIME</th>
+                       <th class="border-r border-t border-gray-300 p-2 text-center text-[11px] font-bold text-gray-600">SIZE / STD</th>
+                       <th class="border-r border-t border-gray-300 p-2 text-center text-[11px] font-bold text-orange-700 bg-orange-100/50">NILAI</th>`;
+            }
+            h2 += `</tr>`;
+            thead.innerHTML = h1 + h2;
+
+            document.querySelectorAll('.name-sd').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    pNames_sidedish[parseInt(e.target.getAttribute('data-index'))] = e.target.value;
+                });
+            });
+
+            let bHTML = '';
+            sideDishes.forEach(dish => {
+                bHTML += `<tr class="hover:bg-blue-50 transition-colors border-b border-gray-200">
+                    <td class="border-r border-gray-300 p-3 font-bold text-orange-900 bg-orange-50/40">${dish.name}</td>`;
+                for (let p = 0; p < pCount_sidedish; p++) {
+                    const sc = (scores_sidedish[p] && scores_sidedish[p][dish.id]) || { time: '', size: '', nilai: '' };
+                    bHTML += `
+                        <td class="border-r border-gray-200 p-1 bg-white"><input type="text" class="w-full p-1.5 border border-transparent hover:border-gray-300 rounded text-center text-sm outline-none inp-sd" data-p="${p}" data-dish="${dish.id}" data-field="time" placeholder="-" value="${sc.time}"></td>
+                        <td class="border-r border-gray-200 p-1 bg-white"><input type="text" class="w-full p-1.5 border border-transparent hover:border-gray-300 rounded text-center text-sm outline-none inp-sd" data-p="${p}" data-dish="${dish.id}" data-field="size" placeholder="-" value="${sc.size}"></td>
+                        <td class="border-r border-gray-300 p-1 bg-orange-50/30"><input type="number" min="1" max="10" class="w-full p-1.5 border border-gray-300 rounded text-center text-sm font-bold text-orange-700 outline-none inp-sd" data-p="${p}" data-dish="${dish.id}" data-field="nilai" placeholder="1-10" value="${sc.nilai}"></td>
+                    `;
+                }
+                bHTML += `</tr>`;
+            });
+
+            // Total & Average
+            bHTML += `<tr class="bg-gray-100 border-t-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-gray-700">TOTAL NILAI</td>`;
+            for (let p = 0; p < pCount_sidedish; p++) {
+                let tot = 0;
+                if (scores_sidedish[p]) {
+                    for (let d in scores_sidedish[p]) {
+                        let v = parseFloat(scores_sidedish[p][d].nilai);
+                        if (!isNaN(v)) tot += v;
+                    }
+                }
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-orange-700" colspan="3">${tot}</td>`;
+            }
+            bHTML += `</tr>`;
+
+            bHTML += `<tr class="bg-orange-100 border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-orange-900">RATA - RATA</td>`;
+            for (let p = 0; p < pCount_sidedish; p++) {
+                let tot = 0, cnt = 0;
+                if (scores_sidedish[p]) {
+                    for (let d in scores_sidedish[p]) {
+                        let v = parseFloat(scores_sidedish[p][d].nilai);
+                        if (!isNaN(v)) { tot += v; cnt++; }
+                    }
+                }
+                let avg = cnt > 0 ? (tot / cnt).toFixed(2) : 0;
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-orange-900" colspan="3">${avg}</td>`;
+            }
+            bHTML += `</tr>`;
+
+            tbody.innerHTML = bHTML;
+
+            document.querySelectorAll('.inp-sd').forEach(inp => {
+                inp.addEventListener('input', (e) => {
+                    const p = e.target.getAttribute('data-p');
+                    const dish = e.target.getAttribute('data-dish');
+                    const fld = e.target.getAttribute('data-field');
+                    if (!scores_sidedish[p]) scores_sidedish[p] = {};
+                    if (!scores_sidedish[p][dish]) scores_sidedish[p][dish] = { time: '', size: '', nilai: '' };
+                    scores_sidedish[p][dish][fld] = e.target.value;
+                    renderSideDishTable();
+                });
+            });
+        }
+
+
+        // --- DATA & RENDERING: BEVERAGE ---
+        const beverages = [
+            { id: 'jd_h_cal', cat: 'Japan Drip', catSpan: 2, type: 'Hot', typeSpan: 1, name: 'Hot Coffee Au Lait' },
+            { id: 'jd_i_cal', type: 'Ice', typeSpan: 1, name: 'Ice Coffee Au Lait' },
+            { id: 'esp_h_cl', cat: 'Espresso', catSpan: 4, type: 'Hot', typeSpan: 2, name: 'Hot Café latte' },
+            { id: 'esp_h_cp', name: 'Hot Cappuccino' },
+            { id: 'esp_i_cl', type: 'Ice', typeSpan: 2, name: 'Ice Café latte' },
+            { id: 'esp_i_cp', name: 'Ice Cappuccino' },
+            { id: 'cm_h_c', cat: 'Chocolate & Matcha', catSpan: 4, type: 'Hot', typeSpan: 2, name: 'Hot Chocolate' },
+            { id: 'cm_h_ml', name: 'Hot Matcha Latte' },
+            { id: 'cm_i_c', type: 'Ice', typeSpan: 2, name: 'Ice Chocolate' },
+            { id: 'cm_i_ml', name: 'Ice Matcha Latte' },
+            { id: 'tea_i_lt', cat: 'Tea', catSpan: 2, type: 'Ice', typeSpan: 2, name: 'Ice Lychee Tea' },
+            { id: 'tea_i_yt', name: 'Ice Yuzu Tea' },
+        ];
+        let pCount_beverage = 1;
+        let pNames_beverage = [''];
+        let scores_beverage = {};
+
+        function renderBeverageTable() {
+            const thead = document.getElementById('tableHead_beverage');
+            const tbody = document.getElementById('tableBody_beverage');
+
+            let h1 = `<tr class="bg-orange-100 text-orange-900 border-b-2 border-orange-200">
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold w-[120px]" rowspan="2">KATEGORI</th>
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold w-[100px]" rowspan="2">HOT/ICE</th>
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[180px]" rowspan="2">NAMA MINUMAN</th>`;
+            for (let i = 0; i < pCount_beverage; i++) {
+                h1 += `<th class="border-r border-gray-300 p-3 text-center bg-gray-50" colspan="3">
+                    <div class="text-xs text-gray-500 font-bold mb-1 uppercase">Peserta ${i + 1}</div>
+                    <input type="text" class="w-full p-2 border border-gray-300 rounded-md text-sm text-center outline-none bg-white name-bev" data-index="${i}" placeholder="Nama Peserta..." value="${pNames_beverage[i] || ''}">
+                </th>`;
+            }
+            h1 += `</tr>`;
+
+            let h2 = `<tr class="bg-orange-50">`;
+            for (let i = 0; i < pCount_beverage; i++) {
+                h2 += `<th class="border-r border-t border-gray-300 p-2 text-center text-[11px] font-bold text-gray-600">TIME</th>
+                       <th class="border-r border-t border-gray-300 p-2 text-center text-[11px] font-bold text-gray-600">SIZE</th>
+                       <th class="border-r border-t border-gray-300 p-2 text-center text-[11px] font-bold text-orange-700 bg-orange-100/50">NILAI</th>`;
+            }
+            h2 += `</tr>`;
+            thead.innerHTML = h1 + h2;
+
+            document.querySelectorAll('.name-bev').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    pNames_beverage[parseInt(e.target.getAttribute('data-index'))] = e.target.value;
+                });
+            });
+
+            let bHTML = '';
+            beverages.forEach(bev => {
+                bHTML += `<tr class="hover:bg-blue-50 transition-colors border-b border-gray-200">`;
+                if (bev.cat) bHTML += `<td class="border-r border-gray-300 p-2 text-center font-bold text-gray-700 bg-white" rowspan="${bev.catSpan}">${bev.cat}</td>`;
+                if (bev.type) bHTML += `<td class="border-r border-gray-300 p-2 text-center font-medium text-gray-600 bg-white" rowspan="${bev.typeSpan}">${bev.type}</td>`;
+                bHTML += `<td class="border-r border-gray-300 p-2 font-medium text-gray-800 bg-white">${bev.name}</td>`;
+
+                for (let p = 0; p < pCount_beverage; p++) {
+                    const sc = (scores_beverage[p] && scores_beverage[p][bev.id]) || { time: '', size: '', nilai: '' };
+                    bHTML += `
+                        <td class="border-r border-gray-200 p-1 bg-white"><input type="text" class="w-full p-1.5 border border-transparent hover:border-gray-300 rounded text-center text-sm outline-none inp-bev" data-p="${p}" data-bev="${bev.id}" data-field="time" placeholder="-" value="${sc.time}"></td>
+                        <td class="border-r border-gray-200 p-1 bg-white"><input type="text" class="w-full p-1.5 border border-transparent hover:border-gray-300 rounded text-center text-sm outline-none inp-bev" data-p="${p}" data-bev="${bev.id}" data-field="size" placeholder="-" value="${sc.size}"></td>
+                        <td class="border-r border-gray-300 p-1 bg-orange-50/30"><input type="number" min="1" max="10" class="w-full p-1.5 border border-gray-300 rounded text-center text-sm font-bold text-orange-700 outline-none inp-bev" data-p="${p}" data-bev="${bev.id}" data-field="nilai" placeholder="1-10" value="${sc.nilai}"></td>
+                    `;
+                }
+                bHTML += `</tr>`;
+            });
+
+            // Total & Average
+            bHTML += `<tr class="bg-gray-100 border-t-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-gray-700" colspan="3">TOTAL NILAI</td>`;
+            for (let p = 0; p < pCount_beverage; p++) {
+                let tot = 0;
+                if (scores_beverage[p]) {
+                    for (let d in scores_beverage[p]) {
+                        let v = parseFloat(scores_beverage[p][d].nilai);
+                        if (!isNaN(v)) tot += v;
+                    }
+                }
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-orange-700" colspan="3">${tot}</td>`;
+            }
+            bHTML += `</tr>`;
+
+            bHTML += `<tr class="bg-orange-100 border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-orange-900" colspan="3">RATA - RATA</td>`;
+            for (let p = 0; p < pCount_beverage; p++) {
+                let tot = 0, cnt = 0;
+                if (scores_beverage[p]) {
+                    for (let d in scores_beverage[p]) {
+                        let v = parseFloat(scores_beverage[p][d].nilai);
+                        if (!isNaN(v)) { tot += v; cnt++; }
+                    }
+                }
+                let avg = cnt > 0 ? (tot / cnt).toFixed(2) : 0;
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-orange-900" colspan="3">${avg}</td>`;
+            }
+            bHTML += `</tr>`;
+
+            tbody.innerHTML = bHTML;
+
+            document.querySelectorAll('.inp-bev').forEach(inp => {
+                inp.addEventListener('input', (e) => {
+                    const p = e.target.getAttribute('data-p');
+                    const bev = e.target.getAttribute('data-bev');
+                    const fld = e.target.getAttribute('data-field');
+                    if (!scores_beverage[p]) scores_beverage[p] = {};
+                    if (!scores_beverage[p][bev]) scores_beverage[p][bev] = { time: '', size: '', nilai: '' };
+                    scores_beverage[p][bev][fld] = e.target.value;
+                    renderBeverageTable();
+                });
+            });
+        }
+
+
+        // --- DATA & RENDERING: SCALE 1-4 ---
+        const scale14Categories = [
+          {
+            category: 'A. ASPEK TEKNIS (KETERAMPILAN KERJA & PRODUKSI)',
+            items: [
+              { id: 'tech_1', name: 'Tanggung Jawab Terhadap Pekerjaan. Menyelesaikan pekerjaan yang diberikan dan memberikan hasil sesuai dengan harapan' },
+              { id: 'tech_2', name: 'Kebersihan Kerja. Dapat bekerja dengan bersih dan mampu menjaga kebersihan area kerja' },
+              { id: 'tech_3', name: 'Pengetahuan Dalam Pengolahan Produk. Mampu mengisi form produksi yang sudah disediakan dengan benar' },
+              { id: 'tech_4', name: 'Keterampilan Kerja. Mampu melakukan pekerjaan sesuai dengan SOP' },
+              { id: 'tech_5', name: 'Ketepatan waktu dalam menyelesaikan pekerjaan. Mampu menyelesaikan tugas sesuai dengan waktu yang diberikan' },
+            ]
+          },
+          {
+            category: 'B. ASPEK NON-TEKNIS (SIKAP & ETIKA KERJA)',
+            items: [
+              { id: 'nontech_1', name: 'Penampilan. Berpenampilan rapi, bersih dan sesuai dengan SOP' },
+              { id: 'nontech_2', name: 'Disiplin Kerja. Datang kerja tepat waktu, selesai istirahat tepat waktu dan pulang tidak lebih awal, bila ijin dilakukan dengan memberi keterangan' },
+              { id: 'nontech_3', name: 'Keterampilan Interpersonal. Kemampuan untuk berkomunikasi dengan rekan kerja/atasan/orang lain dengan sopan, jelas, efektif menyampaikan pendapat' },
+              { id: 'nontech_4', name: 'Daya tangkap terhadap intruksi yang diberikan. Mampu menangkap dengan jelas perintah mengenai pekerjaan yang diberikan oleh atasan' },
+              { id: 'nontech_5', name: 'Inisiatif. Mau membantu orang lain tanpa harus disuruh' },
+              { id: 'nontech_6', name: 'Sopan santun. Bersikap sopan dalam bekerja, menghargai dan bersikap santun terhadap atasan maupun rekan kerja' },
+              { id: 'nontech_7', name: 'Semangat. Antusias dalam melakukan pekerjaan, dan menunjukan sikap aktif bertanya, serta tidak menunjukan keterpaksaan dalam bekerja' },
+              { id: 'nontech_8', name: 'Integritas. Kejujuran dalam bersikap dan perkataan' },
+              { id: 'nontech_9', name: 'Kerjasama. Mampu bekerja sama, mendukung tim, menghargai pendapat kepada atasan dan rekan kerja' },
+              { id: 'nontech_10', name: 'Sikap positif. Mampu bertindak ramah, mudah beradaptasi, dan memberikan dampak positif saat berada di lingkungan kerja.' },
+            ]
+          }
+        ];
+
+        let pCount_scale14 = 1;
+        let participants_scale14 = [{ name: '', position: 'Baker', scores: {}, status: 'Diluluskan', rejectionReason: '', improvements: '', strengths: '' }];
+
+        function renderScale14Table() {
+            const thead = document.getElementById('tableHead_scale14');
+            const tbody = document.getElementById('tableBody_scale14');
+
+            let h1 = `<tr class="bg-orange-100 text-orange-900 border-b-2 border-orange-200">
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold w-[350px]" rowspan="2">ASPEK PENILAIAN (TEKNIS & NON TEKNIS)</th>`;
+            participants_scale14.forEach((p, i) => {
+                h1 += `<th class="border-r border-gray-300 p-3 text-center bg-gray-50 min-w-[280px]">
+                    <div class="text-xs text-gray-500 font-bold mb-1 uppercase">Peserta ${i + 1}</div>
+                    <div class="space-y-1.5">
+                        <input type="text" class="w-full p-1.5 border border-gray-300 rounded text-sm text-center outline-none bg-white name-s14" data-index="${i}" placeholder="Nama Peserta..." value="${p.name}">
+                        <select class="w-full p-1 border border-gray-300 rounded text-xs font-semibold text-orange-800 bg-orange-50/50 outline-none pos-s14" data-index="${i}">
+                            <option value="Baker" ${p.position === 'Baker' ? 'selected' : ''}>Posisi: Baker</option>
+                            <option value="Crew" ${p.position === 'Crew' ? 'selected' : ''}>Posisi: Crew Store</option>
+                            <option value="Barista" ${p.position === 'Barista' ? 'selected' : ''}>Posisi: Barista / Beverage</option>
+                            <option value="All-Round" ${p.position === 'All-Round' ? 'selected' : ''}>Posisi: All-Round</option>
+                        </select>
+                    </div>
+                </th>`;
+            });
+            h1 += `</tr>`;
+
+            let h2 = `<tr class="bg-orange-50">`;
+            participants_scale14.forEach(() => {
+                h2 += `<th class="border-r border-t border-gray-300 p-2 text-center text-[11px] font-bold text-orange-700 bg-orange-100/50">
+                    <div class="grid grid-cols-4 gap-1 text-[10px]"><span>1 (Sangat Kurang)</span><span>2 (Kurang)</span><span>3 (Baik)</span><span>4 (Sangat Baik)</span></div>
+                </th>`;
+            });
+            h2 += `</tr>`;
+            thead.innerHTML = h1 + h2;
+
+            document.querySelectorAll('.name-s14').forEach(inp => {
+                inp.addEventListener('input', (e) => {
+                    const idx = e.target.getAttribute('data-index');
+                    participants_scale14[idx].name = e.target.value;
+                    renderParticipantFeedback();
+                });
+            });
+            document.querySelectorAll('.pos-s14').forEach(sel => {
+                sel.addEventListener('change', (e) => { participants_scale14[e.target.getAttribute('data-index')].position = e.target.value; });
+            });
+
+            let bHTML = '';
+            scale14Categories.forEach(sec => {
+                bHTML += `<tr class="bg-gray-100 border-y border-gray-300"><td class="border-r border-gray-300 p-3 font-bold text-gray-800 uppercase text-xs bg-gray-200/60" colspan="${pCount_scale14 + 1}">${sec.category}</td></tr>`;
+                sec.items.forEach(item => {
+                    bHTML += `<tr class="hover:bg-blue-50/50 transition-colors border-b border-gray-200"><td class="border-r border-gray-300 p-3 text-sm font-medium text-gray-800 bg-white">${item.name}</td>`;
+                    participants_scale14.forEach((p, pIdx) => {
+                        let cur = p.scores[item.id];
+                        bHTML += `<td class="border-r border-gray-200 p-2 bg-white text-center align-middle"><div class="grid grid-cols-4 gap-2 items-center justify-items-center">`;
+                        [1,2,3,4].forEach(num => {
+                            let chk = cur === num ? 'checked' : '';
+                            bHTML += `<label class="flex flex-col items-center cursor-pointer group">
+                                <input type="radio" name="score_s14_${pIdx}_${item.id}" ${chk} onchange="handleScoreS14(${pIdx}, '${item.id}', ${num})" class="w-4 h-4 text-orange-600 accent-orange-600 cursor-pointer">
+                                <span class="text-[10px] text-gray-500 font-bold mt-0.5">${num}</span>
+                            </label>`;
+                        });
+                        bHTML += `</div></td>`;
+                    });
+                    bHTML += `</tr>`;
+                });
+            });
+
+            // Total Score & Average (Total / 6 as requested in original template logic)
+            bHTML += `<tr class="bg-gray-100 border-t-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-gray-700">TOTAL POIN SKOR</td>`;
+            participants_scale14.forEach(p => {
+                let tot = 0;
+                for (let k in p.scores) { let v = p.scores[k]; if (!isNaN(v)) tot += v; }
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-base font-black text-orange-700">${tot}</td>`;
+            });
+            bHTML += `</tr>`;
+
+            bHTML += `<tr class="bg-orange-100 border-b border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-orange-900">NILAI RATA - RATA (Total / 6)</td>`;
+            participants_scale14.forEach(p => {
+                let tot = 0;
+                for (let k in p.scores) { let v = p.scores[k]; if (!isNaN(v)) tot += v; }
+                let avg = (tot / 6).toFixed(2);
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-orange-900">${avg}</td>`;
+            });
+            bHTML += `</tr>`;
+
+            // Status Recommendation
+            bHTML += `<tr class="bg-white border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-bold text-gray-700">STATUS REKOMENDASI</td>`;
+            participants_scale14.forEach((p, i) => {
+                let bgCls = p.status === 'Diluluskan' ? 'bg-green-50 text-green-700 border-green-300' : 'bg-red-50 text-red-700 border-red-300';
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center align-top space-y-2">
+                    <select class="w-full p-2 border rounded-lg text-xs font-bold outline-none cursor-pointer ${bgCls}" onchange="handleStatusS14(${i}, this.value)">
+                        <option value="Diluluskan" ${p.status === 'Diluluskan' ? 'selected' : ''}>Diluluskan</option>
+                        <option value="Tidak Diluluskan" ${p.status === 'Tidak Diluluskan' ? 'selected' : ''}>Tidak Diluluskan</option>
+                    </select>`;
+                if (p.status === 'Tidak Diluluskan') {
+                    bHTML += `<div class="mt-2 text-left"><label class="block text-[11px] font-bold text-red-600 mb-1">Alasan: *</label><textarea class="w-full p-2 border border-red-200 rounded-md text-xs outline-none bg-red-50/20 text-gray-800 resize-none min-h-[70px] reason-s14" data-index="${i}" placeholder="Alasan...">${p.rejectionReason}</textarea></div>`;
+                }
+                bHTML += `</td>`;
+            });
+            bHTML += `</tr>`;
+
+            tbody.innerHTML = bHTML;
+
+            document.querySelectorAll('.reason-s14').forEach(ta => {
+                ta.addEventListener('input', (e) => { participants_scale14[e.target.getAttribute('data-index')].rejectionReason = e.target.value; });
+            });
+            lucide.createIcons();
+        }
+
+        function renderParticipantFeedback() {
+            const container = document.getElementById('participantFeedbackContainer');
+            if (!container) return;
+            let html = '';
+            participants_scale14.forEach((p, i) => {
+                const displayName = p.name ? p.name : `Peserta ${i + 1}`;
+                html += `
+                    <div class="bg-white p-5 rounded-xl border border-orange-200 shadow-sm flex flex-col gap-4">
+                        <div class="flex items-center justify-between border-b pb-3">
+                            <span class="bg-orange-100 text-orange-900 font-black text-xs px-2.5 py-1 rounded-full uppercase">Peserta ${i + 1}</span>
+                            <span class="text-sm font-bold text-gray-800">${displayName}</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 mb-1.5 flex items-center justify-between">
+                                <span class="text-orange-900">HAL YANG PERLU DITINGKATKAN</span>
+                                <span class="text-red-500 text-[10px]">*Wajib</span>
+                            </label>
+                            <textarea class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none text-xs bg-white min-h-[90px] imp-s14" data-index="${i}" placeholder="Tuliskan area pengembangan...">${p.improvements}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-800 mb-1.5 flex items-center justify-between">
+                                <span class="text-green-800">HAL YANG PERLU DIPERTAHANKAN</span>
+                                <span class="text-green-600 text-[10px]">*Wajib</span>
+                            </label>
+                            <textarea class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none text-xs bg-white min-h-[90px] str-s14" data-index="${i}" placeholder="Tuliskan potensi positif...">${p.strengths}</textarea>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            document.querySelectorAll('.imp-s14').forEach(ta => {
+                ta.addEventListener('input', (e) => { participants_scale14[e.target.getAttribute('data-index')].improvements = e.target.value; });
+            });
+            document.querySelectorAll('.str-s14').forEach(ta => {
+                ta.addEventListener('input', (e) => { participants_scale14[e.target.getAttribute('data-index')].strengths = e.target.value; });
+            });
+        }
+
+        function handleScoreS14(pIdx, itemId, val) {
+            participants_scale14[pIdx].scores[itemId] = val;
+            renderScale14Table();
+        }
+
+        function handleStatusS14(pIdx, val) {
+            participants_scale14[pIdx].status = val;
+            renderScale14Table();
+        }
+
+
+        // --- VALIDATION & SUBMISSION MODAL ---
+        function handleSubmit(formType) {
+            // Validate global store details first
+            if (!globalStore.flagship.trim() || !globalStore.batch.trim() || !globalStore.date) {
+                showModal('error', 'Informasi Toko Belum Lengkap', 'Nama Flagship, Batch, dan Hari/Tanggal Penilaian di bagian atas wajib diisi terlebih dahulu!');
+                return;
+            }
+
+            if (formType === 'sidedish') {
+                // Side dish is optional, but if submitted check signature if filled or let mentor submit
+                showModal('success', 'Penyimpanan Side Dish Berhasil!', 'Data penilaian Side Dish berhasil direkam dan disimpan ke dalam sistem.');
+            } else if (formType === 'beverage') {
+                // Beverage is optional
+                showModal('success', 'Penyimpanan Beverage Berhasil!', 'Data penilaian Beverage berhasil direkam dan disimpan ke dalam sistem.');
+            } else if (formType === 'scale14') {
+                // Scale 1-4 is mandatory
+                for (let i = 0; i < participants_scale14.length; i++) {
+                    if (!participants_scale14[i].improvements.trim() || !participants_scale14[i].strengths.trim()) {
+                        showModal('error', 'Data Belum Lengkap', `Catatan hal yang perlu ditingkatkan dan dipertahankan untuk Peserta ${i + 1} wajib diisi!`);
+                        return;
+                    }
+                    if (participants_scale14[i].status === 'Tidak Diluluskan' && !participants_scale14[i].rejectionReason.trim()) {
+                        showModal('error', 'Data Belum Lengkap', `Alasan tidak diluluskan untuk Peserta ${i + 1} wajib diisi!`);
+                        return;
+                    }
+                }
+                if (!signatures.scale14.dataUrl) {
+                    showModal('error', 'Tanda Tangan Kosong', 'Tanda tangan Pemegang Shift pada Form Skala 1-4 belum dibubuhkan.');
+                    return;
+                }
+                showModal('success', 'Penyimpanan Skala 1-4 Berhasil!', 'Data penilaian Teknis & Nonteknis berhasil direkam dan disimpan ke dalam sistem.');
+            }
+        }
+
+        let activeResetType = null;
+        function confirmResetForm(formType) {
+            activeResetType = formType;
+            document.getElementById('resetModal').classList.remove('hidden');
+        }
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.add('hidden');
+            activeResetType = null;
+        }
+
+        document.getElementById('confirmResetBtn').addEventListener('click', () => {
+            if (activeResetType === 'sidedish') {
+                document.getElementById('comments_sidedish').value = '';
+                scores_sidedish = {};
+                clearSignature('sidedish');
+                renderSideDishTable();
+            } else if (activeResetType === 'beverage') {
+                document.getElementById('comments_beverage').value = '';
+                scores_beverage = {};
+                clearSignature('beverage');
+                renderBeverageTable();
+            } else if (activeResetType === 'scale14') {
+                participants_scale14.forEach(p => {
+                    p.scores = {};
+                    p.improvements = '';
+                    p.strengths = '';
+                    p.rejectionReason = '';
+                    p.status = 'Diluluskan';
+                });
+                clearSignature('scale14');
+                renderScale14Table();
+                renderParticipantFeedback();
+            }
+            closeResetModal();
+        });
+
+        function showModal(type, title, message) {
+            const modal = document.getElementById('notificationModal');
+            const iconContainer = document.getElementById('modalIconContainer');
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+
+            if (type === 'success') {
+                iconContainer.className = 'w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5';
+                iconContainer.innerHTML = `<i data-lucide="check-circle" class="w-10 h-10 text-green-600"></i>`;
+            } else {
+                iconContainer.className = 'w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-5';
+                iconContainer.innerHTML = `<i data-lucide="alert-circle" class="w-10 h-10 text-red-600"></i>`;
+            }
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('notificationModal').classList.add('hidden');
+        }
+
+        window.onload = function() {
+            renderSideDishTable();
+            renderBeverageTable();
+            renderScale14Table();
+            renderParticipantFeedback();
+            initSignatures();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
