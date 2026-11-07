@@ -517,10 +517,13 @@
     <div id="moActionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative"><h3 id="moActionTitle" class="text-lg sm:text-xl font-black text-gray-800 mb-2 text-center">Validasi MO</h3><p id="moActionDesc" class="text-gray-600 mb-6 text-xs sm:text-sm text-center">Apakah Anda yakin akan mengesahkan hasil ini secara final?</p><div class="flex gap-2 sm:gap-3"><button onclick="window.closeMOModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button><button id="moActionConfirmBtn" class="flex-1 text-white font-bold py-3 px-2 sm:px-4 rounded-xl transition-colors text-xs sm:text-sm">Konfirmasi Final</button></div></div>
     </div>
-    <div id="etdNotifLayer" class="fixed inset-0 z-50 hidden no-print" onclick="window.closeETDNotif()">
-        <div id="etdNotifPop" onclick="event.stopPropagation()" class="etd-pop absolute w-[22rem] max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-xl border border-gray-100 p-3">
-            <div class="px-1 pb-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Notifikasi</div>
-            <div id="etdNotifContent" class="space-y-1 max-h-[60vh] overflow-y-auto"></div>
+    <div id="etdNotifLayer" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-sm no-print" onclick="window.closeETDNotif()">
+        <div id="etdNotifPop" onclick="event.stopPropagation()" class="etd-pop relative bg-white rounded-2xl shadow-2xl w-full max-w-sm max-h-[85vh] flex flex-col p-4 sm:p-5">
+            <div class="flex items-center justify-between pb-3 mb-2 border-b border-gray-100 shrink-0">
+                <h3 class="text-base sm:text-lg font-black text-gray-800 flex items-center gap-2"><i data-lucide="bell" class="w-5 h-5 text-misdo-700"></i> Notifikasi</h3>
+                <button onclick="window.closeETDNotif()" aria-label="Tutup" class="text-gray-400 hover:text-gray-800 p-1.5 bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div id="etdNotifContent" class="space-y-1 overflow-y-auto overscroll-contain flex-1 min-h-0 -mr-1 pr-1"></div>
         </div>
     </div>
 
@@ -1156,15 +1159,13 @@
             const layer = document.getElementById('etdNotifLayer');
             if (!layer.classList.contains('hidden')) { window.closeETDNotif(); return; }
             window.etdRefreshNotifs();
-            const r = document.getElementById('etd-notification-bell').getBoundingClientRect(); const pop = document.getElementById('etdNotifPop');
-            pop.style.top = (r.bottom + 10) + 'px'; pop.style.right = Math.max(12, window.innerWidth - r.right - 8) + 'px';
-            layer.classList.remove('hidden'); window.renderETDNotifPanel();
+            layer.classList.remove('hidden'); layer.classList.add('flex'); window.renderETDNotifPanel();
         };
-        window.closeETDNotif = function() { document.getElementById('etdNotifLayer').classList.add('hidden'); window.etdRefreshNotifs(); };
+        window.closeETDNotif = function() { const l = document.getElementById('etdNotifLayer'); l.classList.add('hidden'); l.classList.remove('flex'); window.etdRefreshNotifs(); };
         window.etdPinGo = function() { window.closeETDNotif(); window.showView('history'); };
         window.etdFeedGo = function() { window.closeETDNotif(); window.showView('rekapan'); };
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const l = document.getElementById('etdNotifLayer'); if (l && !l.classList.contains('hidden')) window.closeETDNotif(); } });
-        (function() { const st = document.createElement('style'); st.textContent = '@keyframes etdPop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}.etd-pop{animation:etdPop .15s ease-out}'; document.head.appendChild(st); })();
+        (function() { const st = document.createElement('style'); st.textContent = '@keyframes etdPop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}.etd-pop{animation:etdPop .15s ease-out}'; document.head.appendChild(st); })();
 
         window.stopETDSmartNotifications = function() { if (window.etdUnsubscribe) window.etdUnsubscribe(); };
         window.startETDSmartNotifications = function() {
