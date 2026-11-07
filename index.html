@@ -242,6 +242,14 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="dashboard-cards-container">
+            <button id="card-konfirmasi" style="display:none" onclick="window.showView('konfirmasi')" class="relative group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-teal-400 transition-all duration-300 transform hover:-translate-y-1">
+                <span id="konf-card-badge" class="hidden absolute top-4 right-4 sm:top-6 sm:right-6 min-w-[28px] h-7 px-2 rounded-full bg-red-600 text-white text-sm font-black items-center justify-center shadow">0</span>
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-teal-50 text-teal-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-teal-100">
+                    <i data-lucide="clipboard-check" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Butuh Persetujuan User</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Peserta yang di-assign ke Anda dan menunggu persetujuan OK / NOK.</p>
+            </button>
             <button id="card-buat" onclick="window.createNewAssessment()" class="group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-misdo-500 transition-all duration-300 transform hover:-translate-y-1">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 bg-misdo-100 text-misdo-800 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform">
                     <i data-lucide="file-plus-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
@@ -267,8 +275,8 @@
                 <div class="w-12 h-12 sm:w-14 sm:h-14 bg-purple-50 text-purple-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-purple-100">
                     <i data-lucide="clipboard-signature" class="w-6 h-6 sm:w-7 sm:h-7"></i>
                 </div>
-                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Rekap & Persetujuan</h3>
-                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Lihat rekapan nilai per batch dan berikan stempel persetujuan OK / NOK.</p>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Rekap Penilaian</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Lihat rekapan nilai penilaian per batch beserta status persetujuan User dan validasi MO.</p>
             </button>
             <button id="card-hasil-mentor" onclick="window.showView('hasil-mentor')" class="group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-orange-400 transition-all duration-300 transform hover:-translate-y-1">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 bg-orange-50 text-orange-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-orange-100">
@@ -276,6 +284,13 @@
                 </div>
                 <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Hasil Penilaian Mentor</h3>
                 <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Lihat form penilaian utuh per peserta yang disubmit oleh mentor.</p>
+            </button>
+            <button id="card-users" style="display:none" onclick="window.showView('users')" class="group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-sky-400 transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-sky-50 text-sky-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-sky-100">
+                    <i data-lucide="users" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Kelola User</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Daftar nama User untuk di-assign saat approve form. <span id="users-card-count" class="font-bold text-sky-700"></span></p>
             </button>
             <button id="card-trash" onclick="window.showView('trash')" class="hidden group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-red-400 transition-all duration-300 transform hover:-translate-y-1">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 bg-red-50 text-red-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-red-100">
@@ -316,6 +331,28 @@
     </div>
 
     <!-- REKAPAN TABLE -->
+    <div id="view-users" class="max-w-3xl mx-auto p-4 sm:p-6 mt-4 hidden no-print">
+        <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <button type="button" data-smart-back onclick="window.smartBack()" class="smart-back" title="Kembali" aria-label="Kembali"></button>
+            <div><h2 class="text-lg sm:text-2xl font-black text-gray-800 uppercase">Kelola User</h2><p class="text-xs sm:text-sm text-gray-500">Nama di sini jadi pilihan saat Anda approve dan assign form.</p></div>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-3 sm:p-4 flex gap-2">
+            <select id="user-add-gender" aria-label="Bapak atau Ibu" class="shrink-0 w-[5.5rem] sm:w-28 px-2 py-2.5 border border-gray-300 rounded-xl text-sm font-bold bg-white outline-none focus:ring-2 focus:ring-misdo-500 cursor-pointer"><option value="L">Bapak</option><option value="P">Ibu</option></select>
+            <input id="user-add-input" type="text" maxlength="40" autocomplete="off" placeholder="Tambah nama User..." class="flex-1 min-w-0 px-3 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-misdo-500" onkeydown="if(event.key==='Enter')window.addUserFromInput()">
+            <button onclick="window.addUserFromInput()" class="shrink-0 px-4 py-2.5 bg-misdo-800 hover:bg-misdo-900 text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-transform active:scale-95"><i data-lucide="plus" class="w-4 h-4"></i><span class="hidden sm:inline">Tambah</span></button>
+        </div>
+        <div class="flex items-center justify-between mt-5 mb-2 px-1"><div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Daftar User</div><div id="users-count" class="text-xs text-gray-400"></div></div>
+        <div id="users-list" class="space-y-2"></div>
+    </div>
+
+    <div id="view-konfirmasi" class="max-w-5xl mx-auto p-4 sm:p-6 mt-4 hidden no-print">
+        <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <button type="button" data-smart-back onclick="window.smartBack()" class="smart-back" title="Kembali" aria-label="Kembali"></button>
+            <div><h2 class="text-lg sm:text-2xl font-black text-gray-800 uppercase">Butuh Persetujuan User</h2><p class="text-xs sm:text-sm text-gray-500" id="konf-sub">Pilih nama Anda untuk melihat peserta yang perlu Anda konfirmasi.</p></div>
+        </div>
+        <div id="konf-body"></div>
+    </div>
+
     <div id="view-rekapan" class="max-w-[1400px] mx-auto p-4 sm:p-6 mt-4 hidden no-print">
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 sm:mb-8 gap-4">
             <div class="flex items-center gap-3 sm:gap-4">
@@ -511,6 +548,26 @@
     <div id="exitModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl"><div class="w-16 h-16 sm:w-20 sm:h-20 bg-misdo-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5"><i data-lucide="alert-triangle" class="w-8 h-8 sm:w-10 sm:h-10 text-misdo-700"></i></div><h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2">Kembali ke Dashboard?</h3><p class="text-gray-600 mb-6 sm:mb-8 text-xs sm:text-sm">Pastikan Anda sudah menekan tombol "Simpan Draft" jika ada perubahan yang belum disimpan. Yakin ingin keluar?</p><div class="flex gap-2 sm:gap-3"><button onclick="window.closeExitModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button><button onclick="window.forceExitToDashboard()" class="flex-1 bg-misdo-800 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-misdo-900 transition-colors text-xs sm:text-sm">Ya, Keluar</button></div></div>
     </div>
+    <div id="confirmModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden items-center justify-center p-4 no-print">
+        <div class="etd-pop bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5 sm:p-6 text-center">
+            <div class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3 bg-red-100 text-red-600"><i data-lucide="trash-2" class="w-6 h-6"></i></div>
+            <h3 id="confirmTitle" class="text-lg font-black text-gray-800 mb-1"></h3>
+            <p id="confirmMsg" class="text-sm text-gray-500 mb-5"></p>
+            <div class="flex gap-2"><button id="confirmNo" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition-colors">Batal</button><button id="confirmYes" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-sm transition-colors">Hapus</button></div>
+        </div>
+    </div>
+    <div id="assignModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden items-center justify-center p-3 sm:p-4 no-print" onclick="window.closeAssignModal()">
+        <div onclick="event.stopPropagation()" class="etd-pop bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[88vh] flex flex-col p-4 sm:p-5">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 shrink-0">
+                <h3 id="assignTitle" class="text-base sm:text-lg font-black text-gray-800">Approve &amp; Assign</h3>
+                <button onclick="window.closeAssignModal()" aria-label="Tutup" class="text-gray-400 hover:text-gray-800 p-1.5 bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <p id="assignSub" class="text-xs text-gray-500 mb-3 shrink-0"></p>
+            <div id="assignBody" class="overflow-y-auto overscroll-contain flex-1 min-h-0 space-y-3 pr-1"></div>
+            <div id="assignErr" class="hidden text-xs font-bold text-red-600 mt-2 shrink-0"></div>
+            <div class="pt-3 mt-3 border-t border-gray-100 flex gap-2 shrink-0"><button onclick="window.closeAssignModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition-colors">Batal</button><button id="assignConfirmBtn" onclick="window.confirmAssign()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-sm transition-colors">Approve</button></div>
+        </div>
+    </div>
     <div id="userActionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative"><h3 id="userActionTitle" class="text-lg sm:text-xl font-black text-gray-800 mb-2 text-center">Set Keputusan User</h3><p id="userActionDesc" class="text-gray-600 mb-4 text-xs sm:text-sm text-center">Tindakan ini bersifat final. Silakan berikan alasan.</p><div class="mb-4 sm:mb-6"><label class="block text-[10px] sm:text-xs font-bold text-gray-700 mb-2 uppercase">Alasan Keputusan <span class="text-red-500">*</span></label><textarea id="userActionReason" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-misdo-500 resize-none h-20 sm:h-24 text-sm" placeholder="Sebutkan alasannya secara detail..."></textarea></div><div class="flex gap-2 sm:gap-3"><button onclick="window.closeUserModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button><button id="userActionConfirmBtn" class="flex-1 text-white font-bold py-3 px-2 sm:px-4 rounded-xl transition-colors text-xs sm:text-sm">Konfirmasi Final</button></div></div>
     </div>
@@ -669,24 +726,30 @@
                 cardHistory.style.display = 'none'; document.getElementById('etd-notification-bell').classList.add('hidden');
                 if(window.etdUnsubscribe) { window.etdUnsubscribe(); window.etdUnsubscribe = null; }
             }
+            document.getElementById('card-users').style.display = window.userRole === 'ETD' ? 'block' : 'none';
+            document.getElementById('card-konfirmasi').style.display = window.userRole === 'USER' ? 'block' : 'none';
+            if (window.userRole === 'ETD' || window.userRole === 'USER') window.startUsersListener(); else window.stopUsersListener();
+            if (window.userRole === 'USER') window.startKonfirmasiListener(); else window.stopKonfirmasiListener();
             window.showView('dashboard');
         }
 
         window.showView = function(view) {
-            ['loading','login','dashboard','drafts','history','rekapan','hasil-mentor','form','trash'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+            ['loading','login','dashboard','drafts','history','rekapan','hasil-mentor','form','trash','users','konfirmasi'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
             document.getElementById(`view-${view}`).classList.remove('hidden'); window.scrollTo(0,0);
             if (view === 'drafts') window.loadDraftsList();
             if (view === 'history') window.loadHistoryList();
             if (view === 'rekapan') window.loadMOView('rekapan');
             if (view === 'hasil-mentor') window.loadMOView('hasil-mentor');
             if (view === 'trash') window.loadTrashList();
+            if (view === 'users') window.renderUsersView();
+            if (view === 'konfirmasi') { if (!window.__navBack) window.konfActiveUid = null; window.renderKonfirmasi(); }
             if(window.lucide) window.lucide.createIcons();
         };
 
         // ===== Smart Back: merekam halaman sebelumnya dan menyesuaikan ikon/label tujuan =====
         (function() {
             const origShowView = window.showView;
-            const NAMES = { dashboard: 'Dashboard', drafts: 'Draft', history: null, rekapan: 'Rekapan', 'hasil-mentor': 'Hasil Mentor', trash: 'Tempat Sampah' };
+            const NAMES = { dashboard: 'Dashboard', drafts: 'Draft', history: null, rekapan: 'Rekapan', 'hasil-mentor': 'Hasil Mentor', trash: 'Tempat Sampah', users: 'Kelola User', konfirmasi: 'Persetujuan User' };
             window.navStack = []; window.currentView = null;
             const nameOf = (v) => v === 'history' ? (window.userRole === 'ETD' ? 'Antrean Approve' : 'Riwayat') : (NAMES[v] || 'Dashboard');
             window.updateSmartBack = function() {
@@ -874,9 +937,14 @@
         }
 
         window.handleETDApprove = async function() {
-            if (window.userRole !== 'ETD') return; if(!confirm("Setujui (Approve) penilaian ini agar data masuk ke rekapitulasi Manager Operasional?")) return;
+            if (window.userRole !== 'ETD') return;
+            const gs = window.globalStore || {}; const n = gs.participantCount || 0;
+            const parts = []; for (let i = 0; i < n; i++) { const pp = gs.selectedParticipants && gs.selectedParticipants[i]; if (pp) parts.push({ index: i, name: pp.namaPeserta || `Peserta ${i + 1}`, current: null }); }
+            window.openAssignModal({ mode: 'approve', formId: window.currentDraftId, count: n, participants: parts, sub: `${window.globalStore.mentorName || 'Mentor'} \u00b7 ${window.globalStore.flagship || '-'}` });
+        }
+        window.commitApprove = async function(formId, assignArr) {
             const btnApprove = document.getElementById('btn-etd-approve'); btnApprove.disabled = true; btnApprove.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...`;
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', window.currentDraftId), { isApprovedByETD: true, approvedAt: Date.now() }); window.showModal('success', 'Berhasil Diapprove!', 'Form penilaian telah disetujui dan kini siap direkap oleh Manager Operasional.'); setTimeout(() => { window.showView('history'); }, 2000); } 
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId), { isApprovedByETD: true, approvedAt: Date.now(), userAssignments: assignArr }); window.showModal('success', 'Berhasil Diapprove!', 'Form disetujui dan dikirim ke User yang di-assign untuk dikonfirmasi.'); setTimeout(() => { window.showView('history'); }, 2000); }
             catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan saat melakukan approval.'); btnApprove.disabled = false; btnApprove.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i> Approve ETD`; }
         }
 
@@ -995,11 +1063,10 @@
                 let actionUser = `<div class="flex flex-col gap-1.5 text-center">`;
                 if (rec.userApp.status !== 'PENDING') {
                     const colorClass = rec.userApp.status === 'OK' ? 'text-green-700 bg-green-100 border-green-300' : 'text-red-700 bg-red-100 border-red-300';
-                    actionUser += `<div class="text-[11px] font-black px-2 py-1.5 rounded border ${colorClass} inline-block mx-auto uppercase shadow-sm" style="white-space: nowrap !important; word-break: keep-all !important;">${rec.userApp.status}</div><div class="text-[10px] text-gray-600 italic mt-1 leading-tight text-center bg-white p-1 rounded-md border border-gray-100">${rec.userApp.reason}</div>`;
+                    actionUser += `<div class="text-[11px] font-black px-2 py-1.5 rounded border ${colorClass} inline-block mx-auto uppercase shadow-sm" style="white-space: nowrap !important; word-break: keep-all !important;">${rec.userApp.status}</div>${rec.userApp.by ? '<div class="text-[10px] text-gray-500 mt-1">oleh <b>' + uEsc(rec.userApp.by) + '</b></div>' : ''}<div class="text-[10px] text-gray-600 italic mt-1 leading-tight text-center bg-white p-1 rounded-md border border-gray-100">${rec.userApp.reason}</div>`;
                     if (window.userRole === 'ETD') actionUser += `<button onclick="window.undoAction('${rec.formId}', ${rec.pIndex}, 'USER')" class="mt-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors w-full text-center py-1">Undo (Reset)</button>`;
                 } else {
-                    if (window.userRole === 'USER') actionUser += `<div class="flex gap-1.5 justify-center mt-1"><button onclick="window.promptUserAction('${rec.formId}', ${rec.pIndex}, 'OK')" class="flex-1 text-white bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-[11px] font-bold transition-transform active:scale-95 shadow-sm">OK</button><button onclick="window.promptUserAction('${rec.formId}', ${rec.pIndex}, 'NOK')" class="flex-1 text-white bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg text-[11px] font-bold transition-transform active:scale-95 shadow-sm">NOK</button></div>`;
-                    else actionUser += `<span class="text-gray-400 text-xs italic font-medium">Menunggu User</span>`;
+                    actionUser += window.rekapUserPendingHtml(rec);
                 }
                 actionUser += `</div>`;
 
@@ -1022,7 +1089,7 @@
 
                 tHtml += `<tr class="border-b border-gray-200 transition-colors ${rowBg}"><td class="p-3 text-center font-bold text-gray-800 min-w-[50px]">${counter++}</td><td class="p-3 font-bold text-gray-800 min-w-[200px] whitespace-normal">${rec.participant.namaPeserta}</td><td class="p-3 text-gray-600 min-w-[120px]">${rec.participant.idPelamar}</td><td class="p-3 text-gray-600 min-w-[150px] whitespace-normal">${rec.form.globalStore.flagship}</td><td class="p-3 text-gray-600 min-w-[150px] whitespace-normal">${rec.participant.penempatan || '-'}</td><td class="p-3 text-center font-bold text-blue-600 min-w-[140px]">${avgBev}</td><td class="p-3 text-center font-bold text-purple-600 min-w-[140px]">${avgSD}</td><td class="p-3 text-center font-bold text-orange-600 min-w-[120px]">${avg14}</td><td class="p-3 text-sm min-w-[200px] whitespace-normal"><div class="line-clamp-3" title="${str}">${str}</div></td><td class="p-3 text-sm min-w-[200px] whitespace-normal"><div class="line-clamp-3" title="${imp}">${imp}</div></td><td class="p-3 text-xs align-top min-w-[160px]">${mentorStatusHtml}</td><td class="p-3 text-sm align-top min-w-[180px] whitespace-normal"><div class="line-clamp-3">${keteranganMentor}</div></td><td class="p-3 align-middle min-w-[180px]">${actionUser}</td><td class="p-3 align-middle min-w-[160px]">${actionMO}</td></tr>`;
             });
-            if(!tHtml) tHtml = `<tr><td colspan="15" class="p-8 text-center text-gray-500 font-bold bg-gray-50">Tidak ada data untuk filter ini.</td></tr>`;
+            if(!tHtml) tHtml = `<tr><td colspan="14" class="p-8 text-center text-gray-500 font-bold bg-gray-50">Tidak ada data untuk filter ini.</td></tr>`;
             tbody.innerHTML = tHtml; if(window.lucide) window.lucide.createIcons();
         }
 
@@ -1039,24 +1106,26 @@
             cardContainer.innerHTML = cHtml; if(window.lucide) window.lucide.createIcons();
         }
 
-        window.promptUserAction = function(formId, participantIndex, status) {
-            window.activeUserAction = { formId, participantIndex, status }; const modal = document.getElementById('userActionModal');
+        window.promptUserAction = function(formId, participantIndex, status, byId, byName, pName) {
+            window.activeUserAction = { formId, participantIndex, status, byId: byId || null, byName: byName || '' }; { const d = document.getElementById('userActionDesc'); if (d) d.innerText = (pName ? pName + ' \u00b7 ' : '') + (byName ? 'atas nama ' + byName + '. ' : '') + 'Tindakan ini bersifat final. Silakan berikan alasan.'; } const modal = document.getElementById('userActionModal');
             document.getElementById('userActionTitle').innerText = status === 'OK' ? 'Setujui Peserta (OK)' : 'Tolak Peserta (NOK)'; const reasonInput = document.getElementById('userActionReason'); const btnConfirm = document.getElementById('userActionConfirmBtn'); reasonInput.value = ''; 
             if(status === 'NOK') btnConfirm.className = "flex-1 bg-red-600 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-red-700 transition-colors text-xs sm:text-sm"; else btnConfirm.className = "flex-1 bg-green-600 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-green-700 transition-colors text-xs sm:text-sm"; 
             btnConfirm.onclick = window.executeUserAction; modal.classList.remove('hidden');
         }
         window.closeUserModal = function() { document.getElementById('userActionModal').classList.add('hidden'); }
         window.executeUserAction = async function() {
-            if(!window.activeUserAction) return; const { formId, participantIndex, status } = window.activeUserAction; const reason = document.getElementById('userActionReason').value; if(!reason.trim()) return window.showModal('error', 'Alasan Wajib Diisi', 'Silakan isi alasan keputusan Anda pada kolom yang disediakan.');
+            if(!window.activeUserAction) return; const { formId, participantIndex, status, byId, byName } = window.activeUserAction; const reason = document.getElementById('userActionReason').value; if(!reason.trim()) return window.showModal('error', 'Alasan Wajib Diisi', 'Silakan isi alasan keputusan Anda pada kolom yang disediakan.');
             const btnConfirm = document.getElementById('userActionConfirmBtn'); btnConfirm.innerText = "Menyimpan..."; btnConfirm.disabled = true;
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId); const docSnap = await getDoc(docRef);
                 if(docSnap.exists()) {
                     let data = docSnap.data(); if(!data.userApprovals) data.userApprovals = Array(data.globalStore.participantCount).fill({status: 'PENDING', reason: ''});
-                    data.userApprovals[participantIndex] = { status, reason, at: Date.now() }; await updateDoc(docRef, { userApprovals: data.userApprovals, hasUnreadUpdate: true });
+                    const curU = data.userApprovals[participantIndex]; if (curU && curU.status && curU.status !== 'PENDING') { window.closeUserModal(); return window.showModal('error', 'Sudah Dikonfirmasi', 'Peserta ini sudah dikonfirmasi sebelumnya.'); }
+                    if (byId && !(data.userAssignments && data.userAssignments[participantIndex] && data.userAssignments[participantIndex].uid === byId)) { window.closeUserModal(); return window.showModal('error', 'Assign Berubah', 'Peserta ini sudah dipindahkan ke User lain oleh ETD.'); }
+                    data.userApprovals[participantIndex] = { status, reason, at: Date.now(), by: byName || null, byId: byId || null }; await updateDoc(docRef, { userApprovals: data.userApprovals, hasUnreadUpdate: true });
                     const formIdx = window.allSubmittedForms.findIndex(f => f.id === formId); if(formIdx !== -1) window.allSubmittedForms[formIdx].userApprovals = data.userApprovals;
-                    const recIdx = window.moParticipantRecords.findIndex(r => r.formId === formId && r.pIndex === participantIndex); if(recIdx !== -1) window.moParticipantRecords[recIdx].userApp = {status, reason};
-                    window.renderMOTableData(); window.showModal('success', 'Berhasil', 'Keputusan User berhasil disimpan dan bersifat final.');
+                    const recIdx = window.moParticipantRecords.findIndex(r => r.formId === formId && r.pIndex === participantIndex); if(recIdx !== -1) window.moParticipantRecords[recIdx].userApp = data.userApprovals[participantIndex];
+                    if (!document.getElementById('view-rekapan').classList.contains('hidden')) window.renderMOTableData(); window.showModal('success', 'Berhasil', 'Keputusan User berhasil disimpan dan bersifat final.');
                 }
                 window.closeUserModal();
             } catch(e) { window.showModal('error', 'Gagal', 'Gagal mengupdate status User.'); } finally { btnConfirm.innerText = "Konfirmasi Final"; btnConfirm.disabled = false; }
@@ -1100,6 +1169,211 @@
             } catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan saat membatalkan pilihan.'); }
         }
 
+        // ================= USER, ASSIGN & KONFIRMASI =================
+        const uEsc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const U_COL = ['bg-orange-100 text-orange-700', 'bg-blue-100 text-blue-700', 'bg-green-100 text-green-700', 'bg-purple-100 text-purple-700', 'bg-pink-100 text-pink-700', 'bg-teal-100 text-teal-700', 'bg-amber-100 text-amber-700', 'bg-indigo-100 text-indigo-700'];
+        const uColor = (k) => { let h = 0; String(k).split('').forEach(c => { h = (h * 31 + c.charCodeAt(0)) >>> 0; }); return U_COL[h % U_COL.length]; };
+
+        const uGender = (uid) => ((window.usersMap && window.usersMap[uid]) || {}).gender === 'P' ? 'P' : 'L';
+        const uAvatar = (g, cls) => g === 'P'
+            ? `<span class="${cls} shrink-0 inline-block rounded-full overflow-hidden"><svg viewBox="0 0 48 48" class="w-full h-full" aria-label="Ibu" role="img"><circle cx="24" cy="24" r="24" fill="#fce7f3"/><path d="M15.5 21c-1-9 3-14 8.5-14s9.5 5 8.5 14c.3 5 1.5 9 3 11-4 1-6-1-7-3h-9c-1 2-3 4-7 3 1.5-2 2.7-6 3-11Z" fill="#3a2318"/><path d="M4.9 38.5C7.6 33 15 30.5 24 30.5s16.4 2.5 19.1 8A24 24 0 0 1 4.9 38.5Z" fill="#ec4899"/><rect x="20.5" y="24" width="7" height="8" rx="2" fill="#fcd9b6"/><ellipse cx="24" cy="20" rx="7.5" ry="8.5" fill="#fcd9b6"/><path d="M16.6 19c1-5 4-7.5 7.4-7.5s6.4 2.5 7.4 7.5c-3-1-5-3.5-7.4-5-2.4 1.5-4.4 4-7.4 5Z" fill="#3a2318"/><circle cx="21" cy="20.5" r=".9" fill="#3a2318"/><circle cx="27" cy="20.5" r=".9" fill="#3a2318"/><path d="M21.8 24.2c1.4 1.2 3 1.2 4.4 0" fill="none" stroke="#b4553f" stroke-width="1" stroke-linecap="round"/></svg></span>`
+            : `<span class="${cls} shrink-0 inline-block rounded-full overflow-hidden"><svg viewBox="0 0 48 48" class="w-full h-full" aria-label="Bapak" role="img"><circle cx="24" cy="24" r="24" fill="#dbeafe"/><path d="M4.9 38.5C7.6 33 15 30.5 24 30.5s16.4 2.5 19.1 8A24 24 0 0 1 4.9 38.5Z" fill="#3b82f6"/><rect x="20.5" y="24" width="7" height="8" rx="2" fill="#fcd9b6"/><ellipse cx="24" cy="20" rx="7.5" ry="8.5" fill="#fcd9b6"/><path d="M16.3 19c-.5-7 3-11 7.7-11s8.2 4 7.7 11c-1-3-3-5-7.7-5s-6.7 2-7.7 5Z" fill="#3a2318"/><circle cx="21" cy="20.5" r=".9" fill="#3a2318"/><circle cx="27" cy="20.5" r=".9" fill="#3a2318"/><path d="M21.8 24.2c1.4 1.2 3 1.2 4.4 0" fill="none" stroke="#b4553f" stroke-width="1" stroke-linecap="round"/></svg></span>`;
+        const uGreet = () => { const h = new Date().getHours(); return h >= 4 && h < 11 ? 'Selamat Pagi' : h >= 11 && h < 15 ? 'Selamat Siang' : h >= 15 && h < 18 ? 'Selamat Sore' : 'Selamat Malam'; };
+        const uInit = (n) => uEsc(String(n || '?').trim().charAt(0).toUpperCase() || '?');
+        const FORMS_PATH = () => collection(db, 'artifacts', appId, 'public', 'data', 'submitted_forms');
+        window.usersMap = {}; window.usersList = []; window.liveForms = []; window.konfActiveUid = null;
+
+        window.miniToast = function(msg) {
+            const t = document.createElement('div'); t.className = 'etd-pop fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] bg-gray-900 text-white text-sm font-bold px-4 py-2.5 rounded-full shadow-xl no-print max-w-[90vw] text-center';
+            t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2400);
+        };
+        window.askConfirm = function(o) {
+            return new Promise(res => {
+                const m = document.getElementById('confirmModal'); document.getElementById('confirmTitle').textContent = o.title || ''; document.getElementById('confirmMsg').textContent = o.message || '';
+                const yes = document.getElementById('confirmYes'), no = document.getElementById('confirmNo'); yes.textContent = o.okText || 'Ya';
+                const done = (v) => { m.classList.add('hidden'); m.classList.remove('flex'); res(v); };
+                yes.onclick = () => done(true); no.onclick = () => done(false); m.onclick = (e) => { if (e.target === m) done(false); };
+                m.classList.remove('hidden'); m.classList.add('flex'); if (window.lucide) window.lucide.createIcons();
+            });
+        };
+
+        // ---- daftar User (live)
+        window.startUsersListener = function() {
+            window.stopUsersListener();
+            try { window.usersUnsub = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'app_users'), (snap) => {
+                const list = snap.docs.map(d => ({ id: d.id, ...d.data() })); list.sort((a, b) => String(a.nama).localeCompare(String(b.nama), 'id'));
+                window.usersList = list; window.usersMap = {}; list.forEach(u => { window.usersMap[u.id] = u; }); window.onUsersChanged();
+            }, () => {}); } catch (e) {}
+        };
+        window.stopUsersListener = function() { if (window.usersUnsub) { try { window.usersUnsub(); } catch (e) {} window.usersUnsub = null; } };
+        window.onUsersChanged = function() {
+            const c = document.getElementById('users-card-count'); if (c) c.textContent = window.usersList.length ? `(${window.usersList.length} user)` : '';
+            const vis = (id) => { const el = document.getElementById(id); return el && !el.classList.contains('hidden'); };
+            if (vis('view-users')) window.renderUsersView(); if (vis('view-konfirmasi')) window.renderKonfirmasi();
+        };
+
+        // ---- Kelola User (ETD)
+        window.userEditing = null;
+        window.renderUsersView = function() {
+            const box = document.getElementById('users-list'); if (!box) return; const list = window.usersList || [];
+            document.getElementById('users-count').textContent = list.length ? `${list.length} user` : '';
+            if (!list.length) { box.innerHTML = `<div class="text-center py-10 bg-white rounded-2xl border border-dashed border-gray-300"><div class="mx-auto w-12 h-12 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center mb-3"><i data-lucide="user-plus" class="w-6 h-6"></i></div><div class="font-bold text-gray-700">Belum ada User</div><div class="text-xs text-gray-400 mt-1 px-6">Tambahkan nama di atas. Nama ini akan jadi pilihan saat Anda approve form.</div></div>`; if (window.lucide) window.lucide.createIcons(); return; }
+            box.innerHTML = list.map(u => {
+                const av = uAvatar(uGender(u.id), 'w-10 h-10');
+                if (window.userEditing === u.id) return `<div class="bg-white rounded-2xl border border-misdo-300 shadow-sm p-3 flex items-center gap-3">${av}<input id="user-edit-input" type="text" maxlength="40" value="${uEsc(u.nama)}" class="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-misdo-500" onkeydown="if(event.key==='Enter')window.saveRenameUser('${u.id}');if(event.key==='Escape')window.cancelRenameUser()"><button onclick="window.saveRenameUser('${u.id}')" aria-label="Simpan" class="w-9 h-9 shrink-0 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></button><button onclick="window.cancelRenameUser()" aria-label="Batal" class="w-9 h-9 shrink-0 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
+                const gd = uGender(u.id); const seg = (v, lab, on) => `<button onclick="window.setUserGender('${u.id}','${v}')" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-colors ${gd === v ? on : 'text-gray-500 hover:text-gray-700'}">${lab}</button>`;
+                return `<div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-3 flex flex-wrap items-center gap-x-3 gap-y-2 hover:border-gray-300 transition-colors">${av}<div class="flex-1 min-w-[7rem] font-bold text-gray-800 truncate">${uEsc(u.nama)}</div><div class="flex shrink-0 rounded-xl bg-gray-100 p-0.5" role="group" aria-label="Bapak atau Ibu">${seg('L', 'Bapak', 'bg-white shadow-sm text-blue-700')}${seg('P', 'Ibu', 'bg-white shadow-sm text-pink-700')}</div><button onclick="window.startRenameUser('${u.id}')" aria-label="Ubah nama" class="w-9 h-9 shrink-0 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center transition-colors"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="window.deleteUserPrompt('${u.id}')" aria-label="Hapus" class="w-9 h-9 shrink-0 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 flex items-center justify-center transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
+            }).join('');
+            if (window.lucide) window.lucide.createIcons();
+            if (window.userEditing) { const el = document.getElementById('user-edit-input'); if (el && document.activeElement !== el) { el.focus(); el.select(); } }
+        };
+        const cleanName = (v) => String(v || '').replace(/\s+/g, ' ').trim();
+        const nameTaken = (n, exceptId) => (window.usersList || []).some(u => u.id !== exceptId && String(u.nama).toLowerCase() === n.toLowerCase());
+        window.addUserFromInput = async function() {
+            const inp = document.getElementById('user-add-input'); const n = cleanName(inp.value); if (!n) { inp.focus(); return; }
+            if (nameTaken(n)) return window.showModal('error', 'Nama Sudah Ada', `"${n}" sudah ada di daftar User.`);
+            try { const id = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_users', id), { nama: n, gender: (document.getElementById('user-add-gender') || {}).value === 'P' ? 'P' : 'L', createdAt: Date.now() }); inp.value = ''; inp.focus(); window.miniToast(`${n} ditambahkan`); }
+            catch (e) { window.showModal('error', 'Gagal', 'Tidak bisa menambahkan User. Coba lagi.'); }
+        };
+        window.setUserGender = async function(uid, g) {
+            const u = window.usersMap[uid]; if (!u || uGender(uid) === g) return;
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_users', uid), { gender: g }); window.miniToast(`${u.nama} → ${g === 'P' ? 'Ibu' : 'Bapak'}`); }
+            catch (e) { window.showModal('error', 'Gagal', 'Tidak bisa mengubah pilihan Bapak/Ibu.'); }
+        };
+        window.startRenameUser = function(uid) { window.userEditing = uid; window.renderUsersView(); };
+        window.cancelRenameUser = function() { window.userEditing = null; window.renderUsersView(); };
+        window.saveRenameUser = async function(uid) {
+            const n = cleanName(document.getElementById('user-edit-input').value); if (!n) return;
+            if (nameTaken(n, uid)) return window.showModal('error', 'Nama Sudah Ada', `"${n}" sudah ada di daftar User.`);
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_users', uid), { nama: n }); window.userEditing = null; window.miniToast('Nama diperbarui'); }
+            catch (e) { window.showModal('error', 'Gagal', 'Tidak bisa mengubah nama.'); }
+        };
+        window.deleteUserPrompt = async function(uid) {
+            const u = window.usersMap[uid]; if (!u) return; let forms = []; let pend = 0;
+            try { forms = await window.fetchAllSubmittedForms(); forms.forEach(f => { if (!f.isApprovedByETD) return; (f.userAssignments || []).forEach((a, i) => { if (a && a.uid === uid && ((f.userApprovals && f.userApprovals[i] && f.userApprovals[i].status) || 'PENDING') === 'PENDING') pend++; }); }); } catch (e) {}
+            const ok = await window.askConfirm({ title: `Hapus ${u.nama}?`, message: pend ? `${pend} peserta masih menunggu konfirmasi ${u.nama}. Setelah dihapus, mereka kembali ke "Belum di-assign" dan perlu Anda assign ulang.` : 'Nama ini akan hilang dari daftar. Anda bisa menambahkannya lagi kapan saja.', okText: 'Hapus' });
+            if (!ok) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_users', uid));
+                for (const f of forms) { if (!f.isApprovedByETD || !f.userAssignments) continue; let changed = false; const arr = f.userAssignments.slice();
+                    arr.forEach((a, i) => { if (a && a.uid === uid && ((f.userApprovals && f.userApprovals[i] && f.userApprovals[i].status) || 'PENDING') === 'PENDING') { arr[i] = null; changed = true; } });
+                    if (changed) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', f.id), { userAssignments: arr }); f.userAssignments = arr; } }
+                window.miniToast(`${u.nama} dihapus`);
+            } catch (e) { window.showModal('error', 'Gagal', 'Tidak bisa menghapus User.'); }
+        };
+
+        // ---- Modal Assign (approve & assign ulang)
+        window.assignCtx = null;
+        window.openAssignModal = function(ctx) {
+            window.assignCtx = ctx; const users = window.usersList || []; const m = document.getElementById('assignModal');
+            document.getElementById('assignTitle').textContent = ctx.mode === 'approve' ? 'Approve & Assign' : 'Assign ulang';
+            document.getElementById('assignSub').textContent = ctx.sub || ''; document.getElementById('assignErr').classList.add('hidden');
+            const btn = document.getElementById('assignConfirmBtn'); btn.textContent = ctx.mode === 'approve' ? 'Approve' : 'Simpan'; btn.classList.toggle('hidden', !users.length);
+            let html = '';
+            if (!users.length) html = `<div class="text-center py-6"><p class="text-sm text-gray-600 mb-3">Belum ada User. Tambahkan nama User dulu supaya bisa di-assign.</p><button onclick="window.closeAssignModal();window.showView('users')" class="px-4 py-2 bg-misdo-800 hover:bg-misdo-900 text-white rounded-xl text-sm font-bold">Buka Kelola User</button></div>`;
+            else {
+                const opts = (cur) => `<option value="">Pilih User\u2026</option>` + users.map(u => `<option value="${u.id}" ${cur === u.id ? 'selected' : ''}>${uEsc(u.nama)}</option>`).join('');
+                const selCls = 'assign-sel w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm bg-white outline-none focus:ring-2 focus:ring-misdo-500';
+                html += `<div class="text-sm font-bold text-gray-800">Assign ke siapa?</div>`;
+                if (ctx.participants.length > 1) html += `<div class="bg-misdo-50 border border-misdo-100 rounded-xl p-3"><label class="block text-[11px] font-bold text-misdo-800 uppercase mb-1.5">Assign semua peserta ke</label><select class="w-full px-3 py-2.5 border border-misdo-200 rounded-xl text-sm bg-white outline-none focus:ring-2 focus:ring-misdo-500" onchange="window.assignAll(this)">${opts('')}</select></div>`;
+                ctx.participants.forEach(pt => { html += `<div><label class="block text-xs font-bold text-gray-600 mb-1">${uEsc(pt.name)}</label><select data-aidx="${pt.index}" class="${selCls}" onchange="this.classList.remove('border-red-400')">${opts(pt.current)}</select></div>`; });
+            }
+            document.getElementById('assignBody').innerHTML = html; m.classList.remove('hidden'); m.classList.add('flex'); if (window.lucide) window.lucide.createIcons();
+        };
+        window.assignAll = function(sel) { const v = sel.value; if (!v) return; document.querySelectorAll('#assignBody .assign-sel').forEach(x => { x.value = v; x.classList.remove('border-red-400'); }); };
+        window.closeAssignModal = function() { const m = document.getElementById('assignModal'); m.classList.add('hidden'); m.classList.remove('flex'); window.assignCtx = null; };
+        window.confirmAssign = async function() {
+            const ctx = window.assignCtx; if (!ctx) return; const sels = Array.from(document.querySelectorAll('#assignBody .assign-sel')); let bad = false;
+            sels.forEach(x => { if (!x.value) { x.classList.add('border-red-400'); bad = true; } });
+            const err = document.getElementById('assignErr'); if (bad) { err.textContent = ctx.participants.length > 1 ? 'Pilih User untuk semua peserta.' : 'Pilih User terlebih dahulu.'; err.classList.remove('hidden'); return; }
+            const pick = {}; sels.forEach(x => { const u = window.usersMap[x.value]; if (u) pick[x.dataset.aidx] = { uid: u.id, name: u.nama }; });
+            if (ctx.mode === 'approve') { const arr = Array(ctx.count || 0).fill(null); Object.keys(pick).forEach(k => { arr[+k] = pick[k]; }); window.closeAssignModal(); await window.commitApprove(ctx.formId, arr); }
+            else { const idx = ctx.participants[0].index; const a = pick[idx]; window.closeAssignModal(); await window.commitReassign(ctx.formId, idx, a); }
+        };
+        window.commitReassign = async function(formId, idx, a) {
+            try {
+                const ref = doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId); const snap = await getDoc(ref); if (!snap.exists()) return;
+                const d = snap.data(); const st = (d.userApprovals && d.userApprovals[idx] && d.userApprovals[idx].status) || 'PENDING';
+                if (st !== 'PENDING') return window.showModal('error', 'Sudah Dikonfirmasi', 'Peserta ini sudah dikonfirmasi. Gunakan Undo (Reset) dulu jika ingin assign ulang.');
+                const arr = (d.userAssignments || Array((d.globalStore && d.globalStore.participantCount) || 0).fill(null)).slice(); arr[idx] = a; await updateDoc(ref, { userAssignments: arr });
+                const f = (window.allSubmittedForms || []).find(x => x.id === formId); if (f) f.userAssignments = arr;
+                if (!document.getElementById('view-rekapan').classList.contains('hidden')) window.renderMOTableData(); window.miniToast(`Di-assign ke ${a.name}`);
+            } catch (e) { window.showModal('error', 'Gagal', 'Tidak bisa menyimpan assign.'); }
+        };
+        window.reassignFromRekap = function(formId, idx) {
+            const rec = (window.moParticipantRecords || []).find(r => r.formId === formId && r.pIndex === idx); if (!rec) return; const a = rec.form.userAssignments && rec.form.userAssignments[idx];
+            window.openAssignModal({ mode: 'reassign', formId, count: 0, participants: [{ index: idx, name: rec.participant.namaPeserta, current: a ? a.uid : null }], sub: `${rec.form.mentorName || 'Mentor'} \u00b7 ${rec.form.globalStore.flagship || '-'}` });
+        };
+        window.rekapUserPendingHtml = function(rec) {
+            const a = rec.form.userAssignments && rec.form.userAssignments[rec.pIndex]; const nm = a ? ((window.usersMap[a.uid] && window.usersMap[a.uid].nama) || a.name) : null;
+            let h = nm ? `<span class="text-gray-500 text-xs font-medium">Menunggu <b class="text-gray-700">${uEsc(nm)}</b></span>` : `<span class="text-amber-600 text-xs font-bold">Belum di-assign</span>`;
+            if (window.userRole === 'ETD') h += `<button onclick="window.reassignFromRekap('${rec.formId}', ${rec.pIndex})" class="mt-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 underline w-full text-center py-1">${nm ? 'Assign ulang' : 'Assign'}</button>`;
+            return h;
+        };
+
+        // ---- Butuh Konfirmasi (User)
+        window.startKonfirmasiListener = function() {
+            window.stopKonfirmasiListener();
+            try { window.konfUnsub = onSnapshot(FORMS_PATH(), (snap) => {
+                const forms = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(f => !f.isDeleted).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                window.liveForms = forms; window.allSubmittedForms = forms; window.updateKonfBadge();
+                const el = document.getElementById('view-konfirmasi'); if (el && !el.classList.contains('hidden')) window.renderKonfirmasi();
+            }, () => {}); } catch (e) {}
+        };
+        window.stopKonfirmasiListener = function() { if (window.konfUnsub) { try { window.konfUnsub(); } catch (e) {} window.konfUnsub = null; } window.liveForms = []; };
+        window.konfCompute = function(forms) {
+            const map = {};
+            (forms || []).forEach(f => { if (f.isDeleted || !f.isApprovedByETD) return; const n = (f.globalStore && f.globalStore.participantCount) || 0; const asg = f.userAssignments || [];
+                for (let i = 0; i < n; i++) { const p = f.globalStore.selectedParticipants && f.globalStore.selectedParticipants[i]; const a = asg[i]; if (!p || !a || !a.uid) continue;
+                    const st = (f.userApprovals && f.userApprovals[i] && f.userApprovals[i].status) || 'PENDING'; if (st !== 'PENDING') continue;
+                    const e = map[a.uid] || (map[a.uid] = { uid: a.uid, name: (window.usersMap[a.uid] && window.usersMap[a.uid].nama) || a.name || 'User', count: 0, forms: {} });
+                    e.count++; (e.forms[f.id] = e.forms[f.id] || { form: f, idx: [] }).idx.push(i); } });
+            return Object.values(map).map(e => ({ ...e, forms: Object.values(e.forms).sort((a, b) => (a.form.createdAt || 0) - (b.form.createdAt || 0)) })).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'id'));
+        };
+        window.updateKonfBadge = function() {
+            const total = window.konfCompute(window.liveForms).reduce((a, g) => a + g.count, 0); const b = document.getElementById('konf-card-badge'); if (!b) return;
+            b.textContent = total > 99 ? '99+' : String(total); b.classList.toggle('hidden', total === 0); b.classList.toggle('flex', total > 0);
+        };
+        const kAvg = (obj) => { const v = Object.values(obj || {}).map(x => parseFloat(x && x.nilai)).filter(x => !isNaN(x)); return v.length ? Number((v.reduce((a, b) => a + b, 0) / v.length).toFixed(2)) : '-'; };
+        const kTek = (sc) => { const t = Object.values(sc || {}).reduce((a, b) => a + Number(b || 0), 0) / 6; return t > 0 ? Number(t.toFixed(2)) : '-'; };
+        window.konfOpen = function(uid) { window.konfActiveUid = uid; window.renderKonfirmasi(); window.scrollTo(0, 0); };
+        window.konfBack = function() { window.konfActiveUid = null; window.renderKonfirmasi(); window.scrollTo(0, 0); };
+        window.konfAct = function(formId, idx, status) {
+            const g = window.konfCompute(window.liveForms).find(x => x.uid === window.konfActiveUid); const f = (window.liveForms || []).find(x => x.id === formId);
+            const pn = f && f.globalStore.selectedParticipants && f.globalStore.selectedParticipants[idx] ? f.globalStore.selectedParticipants[idx].namaPeserta : '';
+            window.promptUserAction(formId, idx, status, window.konfActiveUid, g ? g.name : ((window.usersMap[window.konfActiveUid] || {}).nama || ''), pn);
+        };
+        window.konfGreet = function(uid, name, count) {
+            const gd = uGender(uid), hon = gd === 'P' ? 'Ibu' : 'Bapak';
+            const msg = count > 0 ? `Terdapat <b class="text-white">${count}</b> peserta yang perlu Anda konfirmasi berikut!` : 'Tidak ada peserta yang perlu Anda konfirmasi saat ini.';
+            return `<div class="etd-pop relative overflow-hidden bg-gradient-to-br from-misdo-800 to-misdo-900 text-white rounded-2xl p-4 sm:p-6 mb-4 shadow-md flex items-center gap-4 sm:gap-5"><div class="absolute -right-8 -top-8 w-32 h-32 bg-white/5 rounded-full pointer-events-none"></div>${uAvatar(gd, 'w-16 h-16 sm:w-20 sm:h-20 ring-4 ring-white/20')}<div class="relative min-w-0"><div class="text-sm sm:text-base font-semibold text-misdo-200">${uGreet()}</div><div class="text-sm sm:text-base text-misdo-100">${hon} :</div><div class="font-black text-xl sm:text-2xl leading-tight break-words">${uEsc(name)}</div><div class="text-xs sm:text-sm text-misdo-200 mt-1.5 leading-snug">${msg}</div></div></div>`;
+        };
+        window.renderKonfirmasi = function() {
+            const body = document.getElementById('konf-body'); if (!body) return; const groups = window.konfCompute(window.liveForms); const sub = document.getElementById('konf-sub');
+            if (window.konfActiveUid) {
+                const g = groups.find(x => x.uid === window.konfActiveUid); const nm = g ? g.name : ((window.usersMap[window.konfActiveUid] || {}).nama || 'User');
+                const head = `<button onclick="window.konfBack()" class="mb-4 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-sm font-bold text-gray-700 transition-colors"><i data-lucide="arrow-left" class="w-4 h-4"></i> Semua nama</button>`;
+                if (!g) { sub.textContent = nm; body.innerHTML = head + window.konfGreet(window.konfActiveUid, nm, 0) + `<div class="text-center py-14 bg-white rounded-2xl border border-gray-200"><div class="mx-auto w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-3"><i data-lucide="check-check" class="w-7 h-7"></i></div><div class="font-black text-gray-800 text-lg">Semua sudah dikonfirmasi</div><div class="text-sm text-gray-500 mt-1">Tidak ada lagi yang menunggu ${uEsc(nm)}.</div></div>`; if (window.lucide) window.lucide.createIcons(); return; }
+                sub.textContent = `${g.count} peserta menunggu konfirmasi Anda`;
+                let h = head + window.konfGreet(g.uid, g.name, g.count) + `<div class="space-y-4">`;
+                g.forms.forEach(({ form: f, idx }) => {
+                    const gs = f.globalStore || {}; const tgl = f.createdAt ? new Date(f.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                    h += `<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"><div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between gap-2"><div class="min-w-0"><div class="font-bold text-sm text-gray-800 truncate">${uEsc(gs.flagship || '-')}${gs.batch ? ' \u00b7 ' + uEsc(gs.batch) : ''}</div><div class="text-xs text-gray-500 truncate">Mentor ${uEsc(f.mentorName || gs.mentorName || '-')} \u00b7 ${tgl}</div></div><button onclick="window.openSubmittedForm('${f.id}')" class="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-100 text-xs font-bold text-gray-700 transition-colors">Lihat form <i data-lucide="external-link" class="w-3 h-3"></i></button></div><div class="divide-y divide-gray-100">`;
+                    idx.forEach(i => {
+                        const p = gs.selectedParticipants[i]; const sc = f.participants_scale14 && f.participants_scale14[i] || {}; const ok = (sc.status || 'Diluluskan') === 'Diluluskan';
+                        const notes = [sc.strengths ? `<div><b>Dipertahankan:</b> ${uEsc(sc.strengths)}</div>` : '', sc.improvements ? `<div><b>Ditingkatkan:</b> ${uEsc(sc.improvements)}</div>` : '', (!ok && sc.rejectionReason) ? `<div><b>Alasan:</b> ${uEsc(sc.rejectionReason)}</div>` : ''].join('');
+                        h += `<div class="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-3"><div class="min-w-0 flex-1"><div class="flex flex-wrap items-center gap-2"><button onclick="window.openSubmittedForm('${f.id}')" class="font-bold text-gray-800 text-sm text-left hover:underline">${uEsc(p.namaPeserta)}</button><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${ok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${ok ? 'Diluluskan' : 'Tidak Diluluskan'}</span></div><div class="mt-1.5 flex flex-wrap gap-1.5 text-[11px] font-bold"><span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">Beverage ${kAvg(f.scores_beverage && f.scores_beverage[i])}</span><span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700">Side Dish ${kAvg(f.scores_sidedish && f.scores_sidedish[i])}</span><span class="px-2 py-0.5 rounded-full bg-orange-50 text-orange-700">Teknis ${kTek(sc.scores)}</span></div>${notes ? `<details class="mt-2 text-xs text-gray-600"><summary class="cursor-pointer text-gray-400 hover:text-gray-600 select-none">Catatan mentor</summary><div class="mt-1.5 space-y-1 bg-gray-50 rounded-lg p-2.5">${notes}</div></details>` : ''}</div><div class="flex gap-2 sm:w-44 shrink-0"><button onclick="window.konfAct('${f.id}', ${i}, 'OK')" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-sm transition-transform active:scale-95 shadow-sm">OK</button><button onclick="window.konfAct('${f.id}', ${i}, 'NOK')" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-sm transition-transform active:scale-95 shadow-sm">NOK</button></div></div>`;
+                    });
+                    h += `</div></div>`;
+                });
+                body.innerHTML = h + `</div>`; if (window.lucide) window.lucide.createIcons(); return;
+            }
+            sub.textContent = 'Pilih nama Anda untuk melihat peserta yang perlu Anda konfirmasi.';
+            if (!groups.length) { body.innerHTML = `<div class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300"><div class="mx-auto w-14 h-14 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mb-3"><i data-lucide="party-popper" class="w-7 h-7"></i></div><div class="font-black text-gray-800 text-lg">Tidak ada yang perlu dikonfirmasi</div><div class="text-sm text-gray-500 mt-1 px-6">Nama akan muncul di sini saat ETD meng-assign penilaian kepada Anda.</div></div>`; if (window.lucide) window.lucide.createIcons(); return; }
+            body.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">` + groups.map(g => `<button onclick="window.konfOpen('${g.uid}')" class="group relative text-left bg-white rounded-2xl p-4 sm:p-5 border border-gray-200 shadow-sm hover:shadow-lg hover:border-teal-300 hover:-translate-y-0.5 transition-all active:scale-[.98]"><div class="flex items-start justify-between gap-2">${uAvatar(uGender(g.uid), 'w-12 h-12 sm:w-14 sm:h-14')}<span class="min-w-[28px] h-7 px-2 rounded-full bg-red-600 text-white text-sm font-black flex items-center justify-center shadow-sm">${g.count}</span></div><div class="mt-3 text-[11px] font-bold uppercase tracking-wide text-gray-400">${uGender(g.uid) === 'P' ? 'Ibu' : 'Bapak'}</div><div class="font-black text-gray-800 text-base sm:text-lg leading-tight break-words">${uEsc(g.name)}</div><div class="text-xs text-gray-500 mt-0.5">${g.count} peserta \u00b7 ${g.forms.length} form</div></button>`).join('') + `</div>`;
+            if (window.lucide) window.lucide.createIcons();
+        };
+
         // ================= NOTIFIKASI ETD (lite) =================
         const ETD_TITLE = 'Seleksi Teknis Crew Mister Donut', ETD_SEEN_KEY = 'etdNotifSeen_v2', ETD_KEEP_MS = 3 * 86400000, ETD_MAX = 10;
         const nEsc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -1108,17 +1382,19 @@
         const nSeenSave = (o) => { try { localStorage.setItem(ETD_SEEN_KEY, JSON.stringify(o)); } catch (e) {} };
         const nLabels = { ACCEPT: 'Accept', REJECT: 'Reject', OK: 'OK', NOK: 'NOK' };
 
-        // Konfirmasi User (Accept/Reject) & MO (OK/NOK) 3 hari terakhir
+        // Konfirmasi User & MO 3 hari terakhir, dikelompokkan per form + pengonfirmasi
         window.etdBuildEvents = function(forms, now) {
-            const ev = [];
+            const groups = {};
             forms.forEach(f => { if (f.isDeleted) return; const n = (f.globalStore && f.globalStore.participantCount) || 0;
                 for (let i = 0; i < n; i++) {
                     const nm = (f.globalStore.selectedParticipants && f.globalStore.selectedParticipants[i] && f.globalStore.selectedParticipants[i].namaPeserta) || `Peserta ${i + 1}`;
                     [['User', f.userApprovals && f.userApprovals[i]], ['MO', f.moApprovals && f.moApprovals[i]]].forEach(([who, a]) => {
                         if (!a || !a.status || a.status === 'PENDING' || !a.at || now - a.at > ETD_KEEP_MS) return;
-                        ev.push({ key: `${f.id}:${i}:${who}:${a.status}:${a.at}`, who, label: nLabels[a.status] || a.status, positive: a.status === 'ACCEPT' || a.status === 'OK', name: nm, place: f.flagship || (f.globalStore && f.globalStore.flagship) || '', reason: a.reason || '', at: a.at });
+                        const by = who === 'User' ? (a.by || '') : ''; const gk = `${f.id}|${who}|${by}`;
+                        const g = groups[gk] || (groups[gk] = { formId: f.id, who, by, place: f.flagship || (f.globalStore && f.globalStore.flagship) || '', pos: [], neg: [], reasons: [], at: 0 });
+                        const positive = a.status === 'ACCEPT' || a.status === 'OK'; (positive ? g.pos : g.neg).push(nm); if (!positive && a.reason) g.reasons.push(a.reason); g.at = Math.max(g.at, a.at);
                     }); } });
-            return ev.sort((x, y) => y.at - x.at);
+            return Object.values(groups).map(g => ({ ...g, key: `${g.formId}:${g.who}:${g.by}:${g.at}:${g.pos.length}-${g.neg.length}` })).sort((x, y) => y.at - x.at);
         };
 
         window.etdUpdateBadge = function() {
@@ -1142,10 +1418,15 @@
             const N = window.etdNotif || { pending: [], events: [], oldest: null }; const seen = nSeenLoad(); const now = Date.now(); let html = '';
             if (N.pending.length) html += `<button onclick="window.etdPinGo()" class="w-full text-left flex items-center gap-3 p-3 rounded-xl bg-misdo-50 border border-misdo-100 hover:bg-misdo-100/70 transition-colors"><div class="w-10 h-10 shrink-0 rounded-xl bg-misdo-700 text-white font-black text-lg flex items-center justify-center">${N.pending.length}</div><div class="min-w-0 flex-1"><div class="font-bold text-sm text-gray-800">Form menunggu approve</div><div class="text-xs text-gray-500">Terlama ${nAgo(now - N.oldest).replace(' lalu', '')}</div></div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i></button>`;
             const evs = N.events.slice(0, ETD_MAX);
+            const unassigned = (window.etdForms || []).reduce((acc, f) => { if (f.isDeleted || f.isApprovedByETD !== true) return acc; const n = (f.globalStore && f.globalStore.participantCount) || 0; for (let i = 0; i < n; i++) { const p = f.globalStore.selectedParticipants && f.globalStore.selectedParticipants[i]; const st = (f.userApprovals && f.userApprovals[i] && f.userApprovals[i].status) || 'PENDING'; if (p && st === 'PENDING' && !(f.userAssignments && f.userAssignments[i])) acc++; } return acc; }, 0);
+            if (unassigned) html += `<button onclick="window.etdFeedGo()" class="w-full text-left mt-2 px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold transition-colors">${unassigned} peserta belum di-assign \u00b7 buka rekapan</button>`;
             if (evs.length) {
                 html += `<div class="px-1 pt-3 pb-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Konfirmasi terbaru</div>`;
-                evs.forEach(e => { const isSeen = !!seen[e.key]; const tone = e.positive ? 'text-green-700' : 'text-red-600';
-                    html += `<button onclick="window.etdFeedGo()" class="w-full text-left flex items-start gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition-opacity ${isSeen ? 'opacity-50' : ''}"><span class="mt-0.5 w-6 h-6 shrink-0 rounded-full flex items-center justify-center ${e.positive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}"><i data-lucide="${e.positive ? 'check' : 'x'}" class="w-3.5 h-3.5"></i></span><span class="min-w-0 flex-1"><span class="block text-sm text-gray-800 truncate"><b>${nEsc(e.name)}</b> <b class="${tone}">${e.label}</b></span><span class="block text-xs text-gray-500 truncate">oleh ${e.who}${e.place ? ' \u00b7 ' + nEsc(e.place) : ''} \u00b7 ${nAgo(now - e.at)}</span>${e.reason ? `<span class="block text-xs text-gray-400 italic truncate">\u201c${nEsc(e.reason)}\u201d</span>` : ''}</span>${isSeen ? '' : '<span class="mt-2 w-2 h-2 rounded-full bg-misdo-600 shrink-0"></span>'}</button>`; });
+                evs.forEach(e => { const isSeen = !!seen[e.key]; const pl = e.who === 'MO' ? 'Accept' : 'OK', nl = e.who === 'MO' ? 'Reject' : 'NOK';
+                    const mixed = e.pos.length && e.neg.length; const icon = mixed ? 'list-checks' : (e.pos.length ? 'check' : 'x'); const ic = mixed ? 'bg-blue-100 text-blue-700' : (e.pos.length ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600');
+                    const line = (lab, tone, arr) => arr.length ? `<span class="block text-xs text-gray-700 break-words"><b class="${tone}">${lab}</b> peserta ${arr.map(nEsc).join(', ')}</span>` : '';
+                    const reason = (e.neg.length === 1 && e.reasons[0]) ? `<span class="block text-xs text-gray-400 italic truncate">\u201c${nEsc(e.reasons[0])}\u201d</span>` : '';
+                    html += `<button onclick="window.etdFeedGo()" class="w-full text-left flex items-start gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition-opacity ${isSeen ? 'opacity-50' : ''}"><span class="mt-0.5 w-6 h-6 shrink-0 rounded-full flex items-center justify-center ${ic}"><i data-lucide="${icon}" class="w-3.5 h-3.5"></i></span><span class="min-w-0 flex-1"><span class="block text-sm text-gray-800"><b>${nEsc(e.by || e.who)}</b> mengkonfirmasi</span>${line(pl, 'text-green-700', e.pos)}${line(nl, 'text-red-600', e.neg)}${reason}<span class="block text-[11px] text-gray-400 mt-0.5 truncate">${e.who}${e.place ? ' \u00b7 ' + nEsc(e.place) : ''} \u00b7 ${nAgo(now - e.at)}</span></span>${isSeen ? '' : '<span class="mt-2 w-2 h-2 rounded-full bg-misdo-600 shrink-0"></span>'}</button>`; });
                 html += `<div class="px-1 pt-2 text-[11px] text-gray-300">Hilang otomatis setelah 3 hari</div>`;
             }
             if (!html) html = `<div class="text-center py-8 text-sm text-gray-400">Semua beres, tidak ada yang menunggu.</div>`;
@@ -1848,7 +2129,7 @@ function menuList(role) {
     if (mt) add('new', 'Buat Penilaian Baru', 'Mulai lembar penilaian OJT baru', 'file-plus-2', 'buat baru tambah form isi mulai', () => window.createNewAssessment());
     if (mt) add('drafts', 'Lanjutkan / Edit Draft', 'Form yang disimpan sementara', 'folder-clock', 'draft simpan sementara lanjutkan edit', go('drafts'));
     if (mt) add('history', role === 'ETD' ? 'Antrean Approve ETD' : 'Riwayat Terkirim & Cetak', role === 'ETD' ? 'Setujui penilaian dari mentor' : 'Penilaian final dan unduh PDF', 'check-circle-2', 'riwayat terkirim antrean approve cetak pdf final', go('history'));
-    if (rv) add('rekapan', 'Rekap & Persetujuan', 'Rekap nilai per batch, stempel persetujuan', 'clipboard-signature', 'rekap rekapan persetujuan stempel tabel cetak', go('rekapan'));
+    if (rv) add('rekapan', 'Rekap Penilaian', 'Rekap nilai per batch dan status persetujuan', 'clipboard-signature', 'rekap rekapan persetujuan stempel tabel cetak', go('rekapan'));
     if (rv) add('hasil', 'Hasil Penilaian Mentor', 'Form penilaian utuh per peserta', 'book-open', 'hasil mentor penilaian form utuh', go('hasil-mentor'));
     if (role === 'ETD') add('trash', 'Tempat Sampah', 'Data terhapus (30 hari)', 'trash-2', 'sampah trash hapus pulihkan restore', go('trash'));
     return m;
