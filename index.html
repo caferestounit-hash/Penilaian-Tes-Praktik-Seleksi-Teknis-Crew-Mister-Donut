@@ -361,6 +361,17 @@
 
     <!-- MAIN FORM WRAPPER -->
     <div id="view-form" class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-xl overflow-hidden mb-8 hidden m-2 sm:m-6 border border-gray-200">
+        <div id="release-banner" class="hidden no-print bg-amber-50 border-b-4 border-amber-400 border-l-[10px] border-l-amber-500 p-4 sm:p-5">
+            <div class="flex items-start gap-3 sm:gap-4">
+                <div class="shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-amber-500 text-white flex items-center justify-center shadow animate-pulse"><i data-lucide="message-square-warning" class="w-6 h-6"></i></div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-amber-700">Form dirilis kembali oleh ETD &middot; perlu diperbaiki</p>
+                    <p class="text-xs font-bold text-amber-800 mt-1">Catatan dari ETD:</p>
+                    <div id="release-banner-note" class="mt-1 bg-white border-2 border-amber-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-bold text-gray-900 whitespace-pre-line break-words"></div>
+                    <p id="release-banner-time" class="text-[10px] sm:text-xs text-amber-700/80 font-medium mt-2"></p>
+                </div>
+            </div>
+        </div>
         <div class="bg-gradient-to-r from-misdo-800 to-misdo-900 p-4 sm:p-6 text-white text-center border-b-4 border-[#d32f2f] relative overflow-hidden print-border-none no-print-bg">
             <div class="flex flex-col sm:flex-row items-center justify-between relative z-10 gap-3 sm:gap-4">
                 <button onclick="window.confirmExitForm()" class="px-3 py-2 sm:px-4 sm:py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition-colors no-print w-full sm:w-auto justify-center">
@@ -473,6 +484,19 @@
 
     <div id="notificationModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden transition-opacity no-print">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-transform"><div id="modalIconContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5"></div><h3 id="modalTitle" class="text-lg sm:text-xl font-black text-gray-800 mb-2"></h3><p id="modalMessage" class="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-xs sm:text-sm"></p><button onclick="window.closeModal()" class="w-full font-bold py-3 px-4 rounded-xl text-white transition-colors shadow-md bg-misdo-900 hover:bg-black cursor-pointer text-sm sm:text-base">Tutup / Mengerti</button></div>
+    </div>
+    <div id="releaseNoticeModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border-t-8 border-amber-500">
+            <div class="p-6 sm:p-8 text-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600 animate-pulse"><i data-lucide="message-square-warning" class="w-8 h-8 sm:w-10 sm:h-10"></i></div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-amber-600 mb-1">Perhatian Mentor</p>
+                <h3 class="text-xl sm:text-2xl font-black text-gray-800 mb-4">Form Dirilis Kembali oleh ETD</h3>
+                <p class="text-xs font-bold text-gray-500 uppercase mb-1.5 text-left">Catatan dari ETD</p>
+                <div id="release-modal-note" class="text-left bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-3 text-base sm:text-lg font-bold text-gray-900 whitespace-pre-line break-words max-h-60 overflow-y-auto"></div>
+                <p class="text-xs text-gray-500 mt-3">Silakan perbaiki penilaian sesuai catatan di atas, lalu kirim ulang. Catatan tetap tampil di bagian atas form.</p>
+                <button onclick="document.getElementById('releaseNoticeModal').classList.add('hidden')" class="mt-5 w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl shadow-lg transition-colors">Saya Mengerti, Lihat Form</button>
+            </div>
+        </div>
     </div>
     <div id="exitModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print">
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl"><div class="w-16 h-16 sm:w-20 sm:h-20 bg-misdo-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5"><i data-lucide="alert-triangle" class="w-8 h-8 sm:w-10 sm:h-10 text-misdo-700"></i></div><h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2">Kembali ke Dashboard?</h3><p class="text-gray-600 mb-6 sm:mb-8 text-xs sm:text-sm">Pastikan Anda sudah menekan tombol "Simpan Draft" jika ada perubahan yang belum disimpan. Yakin ingin keluar?</p><div class="flex gap-2 sm:gap-3"><button onclick="window.closeExitModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button><button onclick="window.forceExitToDashboard()" class="flex-1 bg-misdo-800 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-misdo-900 transition-colors text-xs sm:text-sm">Ya, Keluar</button></div></div>
@@ -705,7 +729,7 @@
             window.currentDraftId = 'DRAFT-' + Math.random().toString(36).substring(2, 9).toUpperCase(); window.viewMode = 'DRAFT';
             window.globalStore = { flagship: '', batch: '', date: new Date().toISOString().split('T')[0], participantCount: 1, mentorName: '', selectedParticipants: [null], signatureDataUrl: null, commentsBeverage: '', commentsSideDish: '' };
             window.participants_scale14 = [{ scores: {}, status: 'Diluluskan', rejectionReason: '', improvements: '', strengths: '' }];
-            window.scores_beverage = {}; window.scores_sidedish = {}; window.moApprovals = []; window.userApprovals = []; window.currentReleaseInfo = null;
+            window.scores_beverage = {}; window.scores_sidedish = {}; window.moApprovals = []; window.userApprovals = []; window.currentReleaseInfo = null; window.syncReleaseBanner(false);
             window.toggleFormReadonly(false); window.applyStateToDOM(); document.getElementById('display-draft-id').innerText = window.currentDraftId;
             window.showView('form'); window.goToStep(1);
         }
@@ -745,7 +769,7 @@
                     const data = docSnap.data(); window.currentDraftId = draftId; window.viewMode = 'DRAFT'; window.globalStore = data.globalStore || window.globalStore; window.participants_scale14 = data.participants_scale14 || window.participants_scale14; window.scores_beverage = data.scores_beverage || {}; window.scores_sidedish = data.scores_sidedish || {}; window.moApprovals = []; window.userApprovals = [];
                     window.currentReleaseInfo = data.releasedByETD ? { releasedByETD: true, releasedAt: data.releasedAt || null, releaseNote: data.releaseNote || '' } : null;
                     window.toggleFormReadonly(false); window.applyStateToDOM(); document.getElementById('display-draft-id').innerText = draftId;
-                    if (data.releasedByETD) setTimeout(() => window.showModal('error', 'Form Dirilis oleh ETD', data.releaseNote ? ('Catatan ETD: ' + data.releaseNote) : 'ETD mengembalikan form ini agar penilaian dapat disunting.'), 400); window.closeModal(); window.showView('form'); window.goToStep(1);
+                    window.syncReleaseBanner(true); window.closeModal(); window.showView('form'); window.goToStep(1);
                 } else { window.showModal('error', 'Tidak Ditemukan', ''); }
             } catch (e) { window.showModal('error', 'Gagal', ''); }
         }
@@ -795,9 +819,9 @@
                 let html = '';
                 forms.forEach(f => {
                     const timeStr = new Date(f.createdAt).toLocaleString('id-ID'); let statusBadge = f.isApprovedByETD ? `<span class="bg-green-100 text-green-700 text-[10px] sm:text-xs font-bold px-2 py-1 rounded flex items-center gap-1 shrink-0"><i data-lucide="check" class="w-3 h-3"></i> Approved ETD</span>` : `<span class="bg-amber-100 text-amber-700 text-[10px] sm:text-xs font-bold px-2 py-1 rounded flex items-center gap-1 shrink-0"><i data-lucide="clock" class="w-3 h-3"></i> Menunggu Approve</span>`;
-                    let releaseBtn = (window.userRole === 'ETD' && !f.isApprovedByETD) ? `<button onclick="window.handleETDRelease('${f.id}')" class="text-sm bg-amber-50 text-amber-700 border border-amber-200 px-3 py-2 rounded-lg font-bold hover:bg-amber-100 transition-colors flex items-center gap-1"><i data-lucide="undo-2" class="w-4 h-4"></i> Rilis</button>` : '';
-                    let deleteBtn = window.userRole === 'ETD' ? `<button onclick="window.deleteSubmittedForm('${f.id}', 'history')" class="text-sm bg-red-50 text-red-700 border border-red-200 px-3 py-2 rounded-lg font-bold hover:bg-red-100 transition-colors flex items-center gap-1"><i data-lucide="trash-2" class="w-4 h-4"></i> Hapus</button>` : '';
-                    html += `<div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col"><div class="flex flex-wrap sm:flex-nowrap justify-between items-start gap-2 mb-3"><span class="bg-gray-100 text-gray-800 text-xs font-black px-2 py-1 rounded">${f.id}</span>${statusBadge}</div><h4 class="font-bold text-gray-800 text-base sm:text-lg mb-1">${f.globalStore.flagship}</h4><p class="text-xs sm:text-sm text-gray-600 mb-2">Batch: <span class="font-bold">${f.globalStore.batch}</span></p><p class="text-xs text-gray-500 mb-4">Mentor: ${f.mentorName}</p><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-gray-100 pt-4 mt-auto"><span class="text-[10px] text-gray-400 font-medium">${timeStr}</span><div class="flex gap-2 justify-end w-full sm:w-auto">${releaseBtn}${deleteBtn}<button onclick="window.openSubmittedForm('${f.id}')" class="flex-1 sm:flex-none text-xs sm:text-sm bg-misdo-50 text-misdo-800 border border-misdo-200 px-4 py-2 rounded-lg font-bold hover:bg-misdo-100 transition-colors whitespace-nowrap text-center">Detail</button></div></div></div>`;
+                    let releaseBtn = (window.userRole === 'ETD' && !f.isApprovedByETD) ? `<button onclick="window.handleETDRelease('${f.id}')" class="flex-1 min-w-0 text-xs sm:text-sm bg-amber-50 text-amber-700 border border-amber-200 px-2 py-2 rounded-lg font-bold hover:bg-amber-100 transition-colors flex items-center justify-center gap-1 whitespace-nowrap"><i data-lucide="undo-2" class="w-4 h-4 shrink-0"></i> Rilis</button>` : '';
+                    let deleteBtn = window.userRole === 'ETD' ? `<button onclick="window.deleteSubmittedForm('${f.id}', 'history')" class="flex-1 min-w-0 text-xs sm:text-sm bg-red-50 text-red-700 border border-red-200 px-2 py-2 rounded-lg font-bold hover:bg-red-100 transition-colors flex items-center justify-center gap-1 whitespace-nowrap"><i data-lucide="trash-2" class="w-4 h-4 shrink-0"></i> Hapus</button>` : '';
+                    html += `<div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col"><div class="flex flex-wrap sm:flex-nowrap justify-between items-start gap-2 mb-3"><span class="bg-gray-100 text-gray-800 text-xs font-black px-2 py-1 rounded break-all">${f.id}</span>${statusBadge}</div><h4 class="font-bold text-gray-800 text-base sm:text-lg mb-1">${f.globalStore.flagship}</h4><p class="text-xs sm:text-sm text-gray-600 mb-2">Batch: <span class="font-bold">${f.globalStore.batch}</span></p><p class="text-xs text-gray-500 mb-4">Mentor: ${f.mentorName}</p><div class="flex flex-col gap-3 border-t border-gray-100 pt-4 mt-auto"><span class="text-[10px] text-gray-400 font-medium">${timeStr}</span><div class="flex gap-2 w-full">${releaseBtn}${deleteBtn}<button onclick="window.openSubmittedForm('${f.id}')" class="flex-1 min-w-0 text-xs sm:text-sm bg-misdo-50 text-misdo-800 border border-misdo-200 px-2 py-2 rounded-lg font-bold hover:bg-misdo-100 transition-colors whitespace-nowrap text-center">Detail</button></div></div></div>`;
                 });
                 container.innerHTML = html; if(window.lucide) window.lucide.createIcons();
             } catch(e) { container.innerHTML = `<div class="col-span-full text-red-500 font-bold">Gagal memuat.</div>`; }
@@ -805,7 +829,7 @@
 
         window.openSubmittedForm = function(formId) {
             const form = window.allSubmittedForms.find(f => f.id === formId); if(!form) return;
-            window.currentDraftId = formId; window.viewMode = 'READONLY'; window.globalStore = form.globalStore; window.participants_scale14 = form.participants_scale14; window.scores_beverage = form.scores_beverage || {}; window.scores_sidedish = form.scores_sidedish || {}; window.moApprovals = form.moApprovals || []; window.userApprovals = form.userApprovals || []; window.isApprovedByETD = form.isApprovedByETD || false;
+            window.currentDraftId = formId; window.viewMode = 'READONLY'; window.globalStore = form.globalStore; window.participants_scale14 = form.participants_scale14; window.scores_beverage = form.scores_beverage || {}; window.scores_sidedish = form.scores_sidedish || {}; window.moApprovals = form.moApprovals || []; window.userApprovals = form.userApprovals || []; window.isApprovedByETD = form.isApprovedByETD || false; window.syncReleaseBanner(false);
             window.toggleFormReadonly(true); window.applyStateToDOM(); document.getElementById('display-draft-id').innerText = formId + (form.isApprovedByETD ? " (APPROVED)" : " (PENDING)"); window.showView('form'); window.goToStep(1);
         }
 
@@ -814,6 +838,18 @@
             const btnApprove = document.getElementById('btn-etd-approve'); btnApprove.disabled = true; btnApprove.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...`;
             try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', window.currentDraftId), { isApprovedByETD: true }); window.showModal('success', 'Berhasil Diapprove!', 'Form penilaian telah disetujui dan kini siap direkap oleh Manager Operasional.'); setTimeout(() => { window.showView('history'); }, 2000); } 
             catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan saat melakukan approval.'); btnApprove.disabled = false; btnApprove.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i> Approve ETD`; }
+        }
+
+        window.syncReleaseBanner = function(showPopup) {
+            const info = window.currentReleaseInfo; const banner = document.getElementById('release-banner');
+            if (!info || window.viewMode !== 'DRAFT') { banner.classList.add('hidden'); return; }
+            const note = (info.releaseNote || '').trim() || 'ETD mengembalikan form ini agar penilaian dapat disunting. (Tidak ada catatan tambahan)';
+            document.getElementById('release-banner-note').textContent = note;
+            document.getElementById('release-modal-note').textContent = note;
+            document.getElementById('release-banner-time').textContent = info.releasedAt ? 'Dirilis pada ' + new Date(info.releasedAt).toLocaleString('id-ID') : '';
+            banner.classList.remove('hidden');
+            if (showPopup) { document.getElementById('releaseNoticeModal').classList.remove('hidden'); }
+            if (window.lucide) window.lucide.createIcons();
         }
 
         window.handleETDRelease = async function(formId) {
