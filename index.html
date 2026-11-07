@@ -1190,6 +1190,7 @@
             if(step === 1) document.getElementById('tab-content-scale14').classList.remove('hidden');
             if(step === 2) document.getElementById('tab-content-beverage').classList.remove('hidden');
             if(step === 3) document.getElementById('tab-content-sidedish').classList.remove('hidden');
+            if(window.relayoutBalancedTables) window.relayoutBalancedTables();
             window.scrollTo({ top: 0, behavior: 'smooth' }); if(window.lucide) window.lucide.createIcons();
         }
 
@@ -1285,6 +1286,45 @@
             { id: 'tea_i_lt', cat: 'Tea', catSpan: 2, type: 'Ice', typeSpan: 2, name: 'Ice Lychee Tea' }, { id: 'tea_i_yt', name: 'Ice Yuzu Tea' }
         ];
 
+        // Lebar tabel seimbang & adaptif: lebar tiap peserta dihitung dari lebar layar dan jumlah peserta
+        window.applyBalancedTable = function(theadId, labelWidths) {
+            const table = document.getElementById(theadId).parentElement;
+            table._bal = { theadId, labelWidths };
+            const n = Math.max(1, parseInt(window.globalStore.participantCount) || 1);
+            const ratio = [0.375, 0.28, 0.345]; // TIME, SIZE, NILAI
+            const MIN_PER = 175, MAX_PER = 340;
+            let avail = table.parentElement.clientWidth;
+            if (!avail || avail < 200) avail = Math.max(320, (window.innerWidth || 1200) - 80); // tab tersembunyi
+            const scale = n >= 4 ? 0.75 : 1;
+            const labels = labelWidths.map(w => Math.round(w * scale));
+            const labelTotal = labels.reduce((a, b) => a + b, 0);
+            let per = Math.floor((avail - labelTotal) / n);
+            per = Math.max(MIN_PER, Math.min(MAX_PER, per));
+            const cols = ratio.map(r => Math.round(per * r));
+            let html = '';
+            labels.forEach(w => { html += `<col style="width:${w}px">`; });
+            for (let i = 0; i < n; i++) cols.forEach(w => { html += `<col style="width:${w}px">`; });
+            let cg = table.querySelector('colgroup'); if (cg) cg.remove();
+            cg = document.createElement('colgroup'); cg.innerHTML = html;
+            table.insertBefore(cg, table.firstChild);
+            const total = labelTotal + n * cols.reduce((a, b) => a + b, 0);
+            table.className = "w-full text-left border-collapse table-fixed" + (per < 260 ? " bal-compact" : "");
+            table.style.tableLayout = 'fixed';
+            table.style.minWidth = total + 'px';
+        };
+        window.relayoutBalancedTables = function() {
+            ['tableHead_beverage', 'tableHead_sidedish'].forEach(id => {
+                const el = document.getElementById(id); const t = el && el.parentElement;
+                if (t && t._bal) window.applyBalancedTable(t._bal.theadId, t._bal.labelWidths);
+            });
+        };
+        (function() { let tm; window.addEventListener('resize', () => { clearTimeout(tm); tm = setTimeout(window.relayoutBalancedTables, 150); }); })();
+        (function() { const st = document.createElement('style'); st.textContent = `
+            .bal-compact input.form-control, .bal-compact select.form-control { min-width: 0 !important; padding-left: 2px !important; padding-right: 2px !important; font-size: 12px !important; }
+            .bal-compact th, .bal-compact td { padding-left: 4px; padding-right: 4px; }
+            .bal-compact thead th .text-sm { font-size: 12px; }
+        `; document.head.appendChild(st); })();
+
         window.renderBeverageTable = function() {
             const thead = document.getElementById('tableHead_beverage'); const tbody = document.getElementById('tableBody_beverage');
             let h1 = `<tr class="bg-misdo-100 text-misdo-900 border-b-2 border-misdo-200"><th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[100px] sm:w-[120px] whitespace-normal" rowspan="2">KATEGORI</th><th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[80px] sm:w-[100px] whitespace-normal" rowspan="2">HOT/ICE</th><th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[150px] sm:min-w-[180px] whitespace-normal" rowspan="2">NAMA MINUMAN</th>`;
@@ -1314,7 +1354,7 @@
             bHTML += `<tr class="bg-misdo-100 border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-misdo-900 whitespace-nowrap" colspan="3">RATA - RATA</td>`;
             for (let p = 0; p < window.globalStore.participantCount; p++) { let tot = 0, cnt = 0; if (window.scores_beverage[p]) { for (let d in window.scores_beverage[p]) { let v = parseFloat(window.scores_beverage[p][d].nilai); if (!isNaN(v)) { tot += v; cnt++; } } } let avg = cnt > 0 ? (tot / cnt).toFixed(2) : 0; bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-misdo-900" colspan="3" id="avg_bev_${p}">${avg}</td>`; }
             bHTML += `</tr>`;
-            thead.innerHTML = h1 + `</tr>`; tbody.innerHTML = bHTML; document.getElementById('tableHead_beverage').parentElement.className = "w-full text-left border-collapse min-w-[1000px]";
+            thead.innerHTML = h1 + `</tr>`; tbody.innerHTML = bHTML; window.applyBalancedTable('tableHead_beverage', [110, 90, 200]);
         }
 
         const sideDishes = [ { id: 'mg_nanban', name: 'Mie Gordon Nanban' }, { id: 'mg_mentai', name: 'Mie Gordon Mentai' } ];
@@ -1344,7 +1384,7 @@
             bHTML += `<tr class="bg-misdo-100 border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-misdo-900 whitespace-nowrap">RATA - RATA</td>`;
             for (let p = 0; p < window.globalStore.participantCount; p++) { let tot = 0, cnt = 0; if (window.scores_sidedish[p]) { for (let d in window.scores_sidedish[p]) { let v = parseFloat(window.scores_sidedish[p][d].nilai); if (!isNaN(v)) { tot += v; cnt++; } } } let avg = cnt > 0 ? (tot / cnt).toFixed(2) : 0; bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-misdo-900" colspan="3" id="avg_sd_${p}">${avg}</td>`; }
             bHTML += `</tr>`;
-            tbody.innerHTML = bHTML; document.getElementById('tableHead_sidedish').parentElement.className = "w-full text-left border-collapse min-w-[1000px]";
+            tbody.innerHTML = bHTML; window.applyBalancedTable('tableHead_sidedish', [220]);
         }
 
         window.updateScore = function(objName, pIdx, itemId, field, val, el) { 
