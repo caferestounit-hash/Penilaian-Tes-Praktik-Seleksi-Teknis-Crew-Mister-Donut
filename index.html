@@ -518,7 +518,12 @@
         <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative"><h3 id="moActionTitle" class="text-lg sm:text-xl font-black text-gray-800 mb-2 text-center">Validasi MO</h3><p id="moActionDesc" class="text-gray-600 mb-6 text-xs sm:text-sm text-center">Apakah Anda yakin akan mengesahkan hasil ini secara final?</p><div class="flex gap-2 sm:gap-3"><button onclick="window.closeMOModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button><button id="moActionConfirmBtn" class="flex-1 text-white font-bold py-3 px-2 sm:px-4 rounded-xl transition-colors text-xs sm:text-sm">Konfirmasi Final</button></div></div>
     </div>
     <div id="etdNotifModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print transition-opacity">
-        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative"><div class="flex justify-between items-center mb-6 border-b pb-3"><h3 class="text-lg sm:text-xl font-black text-gray-800 uppercase flex items-center gap-2"><i data-lucide="bell" class="w-5 h-5 text-misdo-700"></i> Pemberitahuan</h3><button onclick="document.getElementById('etdNotifModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-800 p-1 bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button></div><div id="etdNotifContent" class="space-y-3"></div></div>
+        <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-lg w-full max-h-[85vh] flex flex-col shadow-2xl relative">
+            <div class="flex justify-between items-center mb-3 border-b pb-3"><h3 class="text-lg sm:text-xl font-black text-gray-800 uppercase flex items-center gap-2"><i data-lucide="bell" class="w-5 h-5 text-misdo-700"></i> Pusat Notifikasi ETD</h3><button onclick="document.getElementById('etdNotifModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-800 p-1 bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <div id="etdNotifSummary" class="mb-3"></div>
+            <div id="etdNotifContent" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+            <div id="etdNotifFooter" class="pt-3 mt-3 border-t flex flex-wrap gap-2 justify-between items-center"></div>
+        </div>
     </div>
 
     <script type="module">
@@ -654,19 +659,7 @@
             if(window.userRole === 'ETD') {
                 cardHistory.style.display = 'block'; historyTitle.innerText = "Antrean Approve ETD"; historyDesc.innerText = "Setujui penilaian dari mentor sebelum masuk ke rekapitulasi MO."; historyViewTitle.innerText = "Antrean Penilaian (Menunggu Approve ETD)"; historyViewDesc.innerText = "Pilih form untuk memeriksa dan melakukan Approve atau Hapus form.";
                 document.getElementById('etd-notification-bell').classList.remove('hidden');
-                try {
-                    if(window.etdUnsubscribe) window.etdUnsubscribe();
-                    window.etdUnsubscribe = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'submitted_forms'), (snapshot) => {
-                        let pendingApprove = 0; let pendingUpdates = 0;
-                        snapshot.forEach(doc => { 
-                            let d = doc.data(); if(d.isDeleted) return;
-                            if(d.isApprovedByETD === false) pendingApprove++; 
-                            if(d.hasUnreadUpdate === true) pendingUpdates++;
-                        });
-                        window.etdNotifData = { pendingApprove, pendingUpdates };
-                        if(pendingApprove > 0 || pendingUpdates > 0) document.getElementById('etd-notification-dot').classList.remove('hidden'); else document.getElementById('etd-notification-dot').classList.add('hidden');
-                    });
-                } catch(e) {}
+                window.startETDSmartNotifications();
             } else if(window.userRole === 'MENTOR') {
                 cardHistory.style.display = 'block'; historyTitle.innerText = "Riwayat Terkirim & Cetak"; historyDesc.innerText = "Lihat daftar penilaian yang sudah final (Terkirim) dan Download PDF."; historyViewTitle.innerText = "Riwayat Penilaian Terkirim"; historyViewDesc.innerText = "Daftar form final. Anda dapat melakukan pratinjau dan mencetak (PDF).";
                 document.getElementById('etd-notification-bell').classList.add('hidden');
@@ -882,7 +875,7 @@
         window.handleETDApprove = async function() {
             if (window.userRole !== 'ETD') return; if(!confirm("Setujui (Approve) penilaian ini agar data masuk ke rekapitulasi Manager Operasional?")) return;
             const btnApprove = document.getElementById('btn-etd-approve'); btnApprove.disabled = true; btnApprove.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...`;
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', window.currentDraftId), { isApprovedByETD: true }); window.showModal('success', 'Berhasil Diapprove!', 'Form penilaian telah disetujui dan kini siap direkap oleh Manager Operasional.'); setTimeout(() => { window.showView('history'); }, 2000); } 
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', window.currentDraftId), { isApprovedByETD: true, approvedAt: Date.now() }); window.showModal('success', 'Berhasil Diapprove!', 'Form penilaian telah disetujui dan kini siap direkap oleh Manager Operasional.'); setTimeout(() => { window.showView('history'); }, 2000); } 
             catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan saat melakukan approval.'); btnApprove.disabled = false; btnApprove.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i> Approve ETD`; }
         }
 
@@ -1106,14 +1099,151 @@
             } catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan saat membatalkan pilihan.'); }
         }
 
+        // ================= SMART NOTIFICATIONS (ETD) =================
+        const ETD_CFG = { agingWarnH: 24, agingUrgentH: 48, stalledValidationDays: 3, releasedNotFixedH: 48, staleDraftDays: 7, lowScore: 6, highScore: 8.5, flatMinCount: 4 };
+        const ETD_DISMISS_KEY = 'etdNotifDismissed_v1'; const ETD_BASE_TITLE = 'Seleksi Teknis Crew Mister Donut';
+        const nEsc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const nAgo = (ms) => { const m = Math.floor(ms / 60000); if (m < 60) return Math.max(m, 1) + ' menit'; const h = Math.floor(m / 60); if (h < 24) return h + ' jam'; return Math.floor(h / 24) + ' hari'; };
+        const nStats = (obj) => { const arr = Object.values(obj || {}); const vals = arr.map(x => parseFloat(x && x.nilai)).filter(v => !isNaN(v)); return { cnt: vals.length, vals, avg: vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null, noTime: arr.filter(x => x && x.nilai && !String(x.time || '').trim()).length }; };
+        const nName = (f, i) => ((f.globalStore && f.globalStore.selectedParticipants && f.globalStore.selectedParticipants[i] && f.globalStore.selectedParticipants[i].namaPeserta) || `Peserta ${i + 1}`);
+        const nLabel = (f) => `${f.mentorName || (f.globalStore && f.globalStore.mentorName) || 'Mentor'} \u00b7 ${f.flagship || (f.globalStore && f.globalStore.flagship) || '-'}`;
+        const nKey = (it) => `${it.id}|${it.level}|${it.sig || ''}`;
+        const nLoad = () => { try { return JSON.parse(localStorage.getItem(ETD_DISMISS_KEY) || '{}'); } catch (e) { return {}; } };
+        const nSave = (o) => { try { localStorage.setItem(ETD_DISMISS_KEY, JSON.stringify(o)); } catch (e) {} };
+
+        window.etdSmartAnalyze = function(forms, drafts, now) {
+            const items = []; const C = ETD_CFG;
+            const live = forms.filter(f => !f.isDeleted);
+            const pending = live.filter(f => f.isApprovedByETD === false);
+            const approved = live.filter(f => f.isApprovedByETD === true);
+            const nOf = (f) => (f.globalStore && f.globalStore.participantCount) || 0;
+
+            // 1. Ringkasan antrean
+            if (pending.length) { const oldest = Math.min(...pending.map(f => f.createdAt || now)); items.push({ id: 'pending-summary', level: 'info', icon: 'clock', title: `${pending.length} form menunggu approve`, desc: `Form tertua sudah menunggu ${nAgo(now - oldest)}`, sig: String(pending.length), ts: oldest, action: { kind: 'view', view: 'history' } }); }
+
+            // 2. Umur antrean (SLA)
+            pending.forEach(f => { const age = now - (f.createdAt || now); const h = age / 3600000; if (h < C.agingWarnH) return;
+                items.push({ id: `aging:${f.id}`, level: h >= C.agingUrgentH ? 'urgent' : 'warn', icon: 'alarm-clock', title: `Menunggu approve ${nAgo(age)}`, desc: nLabel(f), ts: f.createdAt, action: { kind: 'form', formId: f.id } }); });
+
+            // 3. Temuan kualitas sebelum approve
+            pending.forEach(f => { const flags = []; const n = nOf(f);
+                if (!(f.globalStore && f.globalStore.signatureDataUrl)) flags.push('Tanda tangan mentor belum ada');
+                for (let i = 0; i < n; i++) { const nm = nName(f, i); const st = (f.participants_scale14 && f.participants_scale14[i] && f.participants_scale14[i].status) || 'Diluluskan';
+                    const bev = nStats(f.scores_beverage && f.scores_beverage[i]); const sd = nStats(f.scores_sidedish && f.scores_sidedish[i]);
+                    if (!bev.cnt) flags.push(`${nm}: nilai Beverage kosong`); if (!sd.cnt) flags.push(`${nm}: nilai Side Dish kosong`);
+                    const avgs = [bev.avg, sd.avg].filter(v => v !== null);
+                    if (avgs.length) { const lo = Math.min(...avgs);
+                        if (st === 'Diluluskan' && lo < C.lowScore) flags.push(`${nm}: direkomendasikan lulus, tetapi rata-rata praktik terendah ${lo.toFixed(1)}`);
+                        if (st === 'Tidak Diluluskan' && lo >= C.highScore) flags.push(`${nm}: tidak diluluskan, padahal rata-rata praktik ${lo.toFixed(1)}`); }
+                    [['Beverage', bev], ['Side Dish', sd]].forEach(([nmType, o]) => { if (o.vals.length >= C.flatMinCount && o.vals.every(v => v === o.vals[0])) flags.push(`${nm}: nilai ${nmType} seragam (${o.vals[0]}) di semua menu`); });
+                    if (bev.noTime >= 2) flags.push(`${nm}: kolom Time kosong di ${bev.noTime} menu Beverage`); }
+                if (flags.length) items.push({ id: `quality:${f.id}`, level: 'warn', icon: 'search-check', title: `${flags.length} temuan perlu dicek sebelum approve`, desc: nLabel(f), details: flags.slice(0, 4).concat(flags.length > 4 ? [`+${flags.length - 4} temuan lain`] : []), sig: String(flags.length), ts: f.createdAt, action: { kind: 'form', formId: f.id } }); });
+
+            // 4. Peserta ganda di beberapa form
+            const seen = {}; live.forEach(f => ((f.globalStore && f.globalStore.selectedParticipants) || []).forEach((p) => { if (p && p.idPelamar) (seen[p.idPelamar] = seen[p.idPelamar] || []).push({ f, p }); }));
+            Object.keys(seen).forEach(pid => { const arr = seen[pid]; const ids = new Set(arr.map(x => x.f.id)); if (ids.size < 2) return;
+                const target = arr.find(x => x.f.isApprovedByETD === false) || arr[0];
+                items.push({ id: `dup:${pid}`, level: 'warn', icon: 'copy', title: `${target.p.namaPeserta || pid} dinilai di ${ids.size} form berbeda`, desc: Array.from(new Set(arr.map(x => nLabel(x.f)))).join(' | '), sig: String(ids.size), ts: target.f.createdAt, action: { kind: 'form', formId: target.f.id } }); });
+
+            // 5. Keputusan User / MO
+            approved.forEach(f => { const n = nOf(f); const rej = []; const pu = [], pm = [];
+                for (let i = 0; i < n; i++) { const u = f.userApprovals && f.userApprovals[i]; const m = f.moApprovals && f.moApprovals[i];
+                    if (u && u.status === 'REJECT') rej.push(`${nName(f, i)} ditolak User${u.reason ? ': ' + u.reason : ''}`);
+                    if (m && m.status === 'NOK') rej.push(`${nName(f, i)} NOK oleh MO`);
+                    if (!u || !u.status || u.status === 'PENDING') pu.push(i); if (!m || !m.status || m.status === 'PENDING') pm.push(i); }
+                if (rej.length) items.push({ id: `reject:${f.id}`, level: f.hasUnreadUpdate ? 'urgent' : 'warn', icon: 'octagon-alert', title: `${rej.length} keputusan penolakan perlu ditindaklanjuti`, desc: nLabel(f), details: rej.slice(0, 4), sig: String(rej.length), ts: f.createdAt, action: { kind: 'rekapan', formId: f.id } });
+                else if (f.hasUnreadUpdate) items.push({ id: `update:${f.id}`, level: 'info', icon: 'bell-ring', title: 'Keputusan baru dari User / MO', desc: nLabel(f), ts: f.createdAt, action: { kind: 'rekapan', formId: f.id } });
+                const since = f.approvedAt || f.createdAt;
+                if (since && now - since > C.stalledValidationDays * 86400000 && (pu.length || pm.length)) items.push({ id: `stalled:${f.id}`, level: 'warn', icon: 'hourglass', title: `Validasi tertunda ${nAgo(now - since)}`, desc: nLabel(f), details: [pm.length ? `${pm.length} peserta belum divalidasi MO` : null, pu.length ? `${pu.length} peserta belum divalidasi User` : null].filter(Boolean), sig: `${pm.length}-${pu.length}`, ts: since, action: { kind: 'rekapan', formId: f.id } }); });
+
+            // 6. Draft: dirilis ETD tapi belum diperbaiki / draft menggantung
+            drafts.forEach(d => { const lbl = nLabel(d);
+                if (d.releasedByETD && d.releasedAt && now - d.releasedAt > C.releasedNotFixedH * 3600000) items.push({ id: `released:${d.id}`, level: 'warn', icon: 'undo-2', title: `Mentor belum memperbaiki form yang dirilis (${nAgo(now - d.releasedAt)})`, desc: lbl, ts: d.releasedAt });
+                else if (!d.releasedByETD && d.updatedAt && now - d.updatedAt > C.staleDraftDays * 86400000) items.push({ id: `stale:${d.id}`, level: 'info', icon: 'folder-clock', title: `Draft belum dikirim ${nAgo(now - d.updatedAt)}`, desc: lbl, ts: d.updatedAt }); });
+
+            const order = { urgent: 0, warn: 1, info: 2 };
+            return items.sort((x, y) => order[x.level] - order[y.level] || (x.ts || 0) - (y.ts || 0));
+        };
+
+        window.etdRefreshNotifs = function() {
+            const now = Date.now(); const all = window.etdSmartAnalyze(window.etdForms || [], window.etdDrafts || [], now);
+            let dismissed = nLoad(); const keys = new Set(all.map(nKey));
+            let changed = false; Object.keys(dismissed).forEach(k => { if (!keys.has(k)) { delete dismissed[k]; changed = true; } }); if (changed) nSave(dismissed);
+            const visible = all.filter(it => !dismissed[nKey(it)]);
+            window.etdNotifItems = { all, visible };
+            const act = visible.filter(i => i.level !== 'info').length; const urgent = visible.some(i => i.level === 'urgent'); const infoOnly = visible.length - act;
+            const dot = document.getElementById('etd-notification-dot');
+            if (dot) {
+                if (act > 0) { dot.className = 'absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black text-white flex items-center justify-center border-2 border-white ' + (urgent ? 'bg-red-600' : 'bg-amber-500'); dot.textContent = act > 99 ? '99+' : String(act); }
+                else if (infoOnly > 0) { dot.className = 'absolute -top-1 -right-1 w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-white'; dot.textContent = ''; }
+                else { dot.className = 'hidden'; dot.textContent = ''; }
+            }
+            if (window.userRole === 'ETD') document.title = (act > 0 ? `(${act}) ` : '') + ETD_BASE_TITLE;
+            if (!document.getElementById('etdNotifModal').classList.contains('hidden')) window.renderETDNotifPanel();
+        };
+
+        window.etdToast = function(title, desc, icon) {
+            let box = document.getElementById('etdToastBox');
+            if (!box) { box = document.createElement('div'); box.id = 'etdToastBox'; box.className = 'fixed top-20 right-3 sm:right-5 z-[60] space-y-2 w-[calc(100%-1.5rem)] sm:w-80 no-print'; document.body.appendChild(box); }
+            const t = document.createElement('div'); t.className = 'bg-white border border-misdo-200 shadow-xl rounded-xl p-3 flex gap-3 cursor-pointer';
+            t.innerHTML = `<div class="p-2 rounded-lg bg-misdo-100 text-misdo-800 h-fit"><i data-lucide="${icon || 'bell'}" class="w-4 h-4"></i></div><div class="min-w-0"><div class="font-bold text-sm text-gray-800">${nEsc(title)}</div><div class="text-xs text-gray-500">${nEsc(desc)}</div></div>`;
+            t.onclick = () => { t.remove(); window.showETDNotifications(); }; box.appendChild(t); if (window.lucide) window.lucide.createIcons();
+            setTimeout(() => t.remove(), 8000);
+            try { if ('Notification' in window && Notification.permission === 'granted' && document.hidden) new Notification(title, { body: desc }); } catch (e) {}
+        };
+
+        window.stopETDSmartNotifications = function() { if (window.etdUnsubscribe) window.etdUnsubscribe(); };
+        window.startETDSmartNotifications = function() {
+            window.stopETDSmartNotifications(); window.etdForms = []; window.etdDrafts = [];
+            const base = ['artifacts', appId, 'public', 'data']; const unsubs = []; let first = true; const prev = {};
+            try { unsubs.push(onSnapshot(collection(db, ...base, 'submitted_forms'), (snap) => {
+                window.etdForms = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                snap.docChanges().forEach(ch => { const d = ch.doc.data(); const sig = JSON.stringify([d.userApprovals, d.moApprovals]); const old = prev[ch.doc.id]; prev[ch.doc.id] = sig;
+                    if (first || d.isDeleted) return;
+                    if (ch.type === 'added' && d.isApprovedByETD === false) window.etdToast('Form baru masuk antrean', `${nLabel(d)} \u00b7 ${(d.globalStore && d.globalStore.participantCount) || 0} peserta`, 'inbox');
+                    else if (ch.type === 'modified' && d.hasUnreadUpdate === true && old !== undefined && old !== sig) window.etdToast('Update keputusan User / MO', nLabel(d), 'bell-ring'); });
+                first = false; window.etdRefreshNotifs();
+            }, () => {})); } catch (e) {}
+            try { unsubs.push(onSnapshot(collection(db, ...base, 'drafts'), (snap) => { window.etdDrafts = snap.docs.map(d => ({ id: d.id, ...d.data() })); window.etdRefreshNotifs(); }, () => {})); } catch (e) {}
+            window.etdTimer = setInterval(window.etdRefreshNotifs, 5 * 60 * 1000);
+            window.etdUnsubscribe = () => { unsubs.forEach(u => { try { u(); } catch (e) {} }); clearInterval(window.etdTimer); window.etdUnsubscribe = null; document.title = ETD_BASE_TITLE; };
+        };
+
+        window.renderETDNotifPanel = function() {
+            const { all, visible } = window.etdNotifItems || { all: [], visible: [] };
+            const forms = (window.etdForms || []).filter(f => !f.isDeleted && f.isApprovedByETD === false); const now = Date.now();
+            const cnt = (l) => visible.filter(i => i.level === l).length;
+            const chip = (n, label, cls) => `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${cls}">${n} ${label}</span>`;
+            const oldest = forms.length ? nAgo(now - Math.min(...forms.map(f => f.createdAt || now))) : null;
+            document.getElementById('etdNotifSummary').innerHTML = `<div class="flex flex-wrap gap-2">${chip(cnt('urgent'), 'Mendesak', 'bg-red-100 text-red-700')}${chip(cnt('warn'), 'Perlu perhatian', 'bg-amber-100 text-amber-800')}${chip(cnt('info'), 'Info', 'bg-blue-100 text-blue-700')}</div>${oldest ? `<div class="text-[11px] text-gray-500 mt-2">Antrean approve: <b>${forms.length}</b> form &middot; tertua menunggu <b>${oldest}</b></div>` : ''}`;
+            const S = { urgent: { box: 'bg-red-50 border-red-200', ic: 'bg-red-200 text-red-800', t: 'text-red-900', x: 'text-red-700', h: 'Mendesak' }, warn: { box: 'bg-amber-50 border-amber-200', ic: 'bg-amber-200 text-amber-800', t: 'text-amber-900', x: 'text-amber-700', h: 'Perlu perhatian' }, info: { box: 'bg-blue-50 border-blue-200', ic: 'bg-blue-200 text-blue-800', t: 'text-blue-900', x: 'text-blue-700', h: 'Informasi' } };
+            let html = '';
+            ['urgent', 'warn', 'info'].forEach(l => { const group = visible.filter(i => i.level === l); if (!group.length) return; const c = S[l];
+                html += `<div class="text-[11px] font-black uppercase tracking-widest text-gray-400 pt-1">${c.h}</div>`;
+                group.forEach(it => { const idx = visible.indexOf(it);
+                    const det = it.details && it.details.length ? `<ul class="mt-1.5 space-y-0.5 text-[11px] ${c.x} list-disc pl-4">${it.details.map(d => `<li>${nEsc(d)}</li>`).join('')}</ul>` : '';
+                    const go = it.action ? `<button onclick="window.etdNotifGo(${idx})" class="px-3 py-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 text-xs font-bold text-gray-700">Buka</button>` : '';
+                    html += `<div class="rounded-xl border ${c.box} p-3"><div class="flex gap-3"><div class="p-2 rounded-lg ${c.ic} h-fit"><i data-lucide="${it.icon}" class="w-4 h-4"></i></div><div class="min-w-0 flex-1"><div class="font-bold text-sm ${c.t}">${nEsc(it.title)}</div><div class="text-xs ${c.x} break-words">${nEsc(it.desc || '')}</div>${det}<div class="mt-2 flex gap-2">${go}<button onclick="window.etdNotifDismiss(${idx})" class="px-3 py-1 rounded-lg text-xs font-bold text-gray-500 hover:text-gray-800">Tandai dibaca</button></div></div></div></div>`; }); });
+            if (!html) html = `<div class="text-center p-6 text-gray-500 font-medium border border-dashed border-gray-200 rounded-xl">${all.length ? 'Semua notifikasi sudah dibaca.' : 'Tidak ada pemberitahuan. Semua antrean aman.'}</div>`;
+            document.getElementById('etdNotifContent').innerHTML = html;
+            let foot = visible.length ? `<button onclick="window.etdNotifDismissAll()" class="text-xs font-bold text-gray-500 hover:text-gray-800">Tandai semua dibaca</button>` : '<span></span>';
+            if ('Notification' in window && Notification.permission === 'default') foot += `<button onclick="window.etdEnableBrowserNotif()" class="text-xs font-bold text-misdo-700 hover:text-misdo-900">Aktifkan notifikasi browser</button>`;
+            document.getElementById('etdNotifFooter').innerHTML = foot; if (window.lucide) window.lucide.createIcons();
+        };
         window.showETDNotifications = function() {
             if (window.userRole !== 'ETD') { window.showView('history'); return; }
-            const notif = window.etdNotifData || { pendingApprove: 0, pendingUpdates: 0 }; let html = '';
-            if (notif.pendingApprove > 0) { html += `<button onclick="window.clearNotifModalAndGo('history')" class="w-full text-left p-4 bg-amber-50 hover:bg-amber-100 rounded-xl border border-amber-200 transition-colors flex items-center justify-between group"><div class="flex items-center gap-3"><div class="p-2 bg-amber-200 text-amber-800 rounded-lg"><i data-lucide="clock" class="w-5 h-5"></i></div><div><div class="font-bold text-amber-900">${notif.pendingApprove} Form Menunggu Approve</div><div class="text-xs text-amber-700">Validasi penilaian final dari mentor</div></div></div><i data-lucide="chevron-right" class="w-5 h-5 text-amber-400 group-hover:text-amber-600"></i></button>`; }
-            if (notif.pendingUpdates > 0) { html += `<button onclick="window.clearUnreadAndGoRekapan()" class="w-full text-left p-4 bg-blue-50 hover:bg-blue-100 rounded-xl border border-blue-200 transition-colors flex items-center justify-between group"><div class="flex items-center gap-3"><div class="p-2 bg-blue-200 text-blue-800 rounded-lg"><i data-lucide="bell-ring" class="w-5 h-5"></i></div><div><div class="font-bold text-blue-900">${notif.pendingUpdates} Pembaruan Validasi</div><div class="text-xs text-blue-700">Terdapat update keputusan dari User / MO</div></div></div><i data-lucide="chevron-right" class="w-5 h-5 text-blue-400 group-hover:text-blue-600"></i></button>`; }
-            if (html === '') { html = `<div class="text-center p-6 text-gray-500 font-medium border border-dashed border-gray-200 rounded-xl">Tidak ada pemberitahuan baru.</div>`; }
-            document.getElementById('etdNotifContent').innerHTML = html; document.getElementById('etdNotifModal').classList.remove('hidden'); if(window.lucide) window.lucide.createIcons();
-        }
+            window.etdRefreshNotifs(); window.renderETDNotifPanel(); document.getElementById('etdNotifModal').classList.remove('hidden');
+        };
+        window.etdNotifDismiss = function(idx) { const it = (window.etdNotifItems.visible || [])[idx]; if (!it) return; const d = nLoad(); d[nKey(it)] = Date.now(); nSave(d); window.etdRefreshNotifs(); window.renderETDNotifPanel(); };
+        window.etdNotifDismissAll = function() { const d = nLoad(); (window.etdNotifItems.visible || []).forEach(it => { d[nKey(it)] = Date.now(); }); nSave(d); window.etdRefreshNotifs(); window.renderETDNotifPanel(); };
+        window.etdEnableBrowserNotif = async function() { try { await Notification.requestPermission(); } catch (e) {} window.renderETDNotifPanel(); };
+        window.etdNotifGo = async function(idx) {
+            const it = (window.etdNotifItems.visible || [])[idx]; if (!it || !it.action) return; const a = it.action;
+            document.getElementById('etdNotifModal').classList.add('hidden');
+            if (a.kind === 'form') { try { await window.fetchAllSubmittedForms(); } catch (e) {} window.openSubmittedForm(a.formId); }
+            else if (a.kind === 'rekapan') { if (a.formId) { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', a.formId), { hasUnreadUpdate: false }); } catch (e) {} } window.showView('rekapan'); }
+            else if (a.kind === 'view') window.showView(a.view);
+        };
 
         window.clearNotifModalAndGo = function(view) { document.getElementById('etdNotifModal').classList.add('hidden'); window.showView(view); }
 
